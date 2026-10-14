@@ -85,4 +85,7 @@ int socios_exportar_ALU(const t_indice *indice, const char *path, const char *pa
                     const t_fecha *fecha_proceso);
 void abm_socio_ALU(t_indice *indice, const t_fecha *fecha_proceso);
 
+void rechazar_socio(const void *reg, const char *linea, const char *tipo_error, const t_fecha *fecha_proc);
+void mostrar_socio(const t_socio *socio);
+
 #endif /* SOCIO_H_INCLUDED */

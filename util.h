@@ -26,7 +26,13 @@ void salir_y_persistir(t_indice *ind_socios, t_indice *ind_titulos, t_matriz_con
 /*            FUNCIONES A IMPLEMENTAR POR EL ALUMNO (version _ALU)             */
 /*============================================================================*/
 
+#define TAM_INGRESO 101
+
+#define TO_UPPER(c) ((c >= 'a' && c <= 'z') ? c - 32 : c)
+
 void salir_y_persistir_ALU(t_indice *ind_socios, t_indice *ind_titulos,
                               t_matriz_consumo matriz_consumo, const t_fecha *fecha_proceso);
+
+
 
 #endif /* UTIL_H_INCLUDED */
