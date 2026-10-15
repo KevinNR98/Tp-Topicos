@@ -217,3 +217,15 @@ void ignorar_rechazo_titulo(const void *reg, const char *tipo_error, const char 
     (void)detalle;
     (void)fecha_proceso;
 }
+
+long obtener_clave_socio(const void *reg)
+{
+    const t_socio *socio = (const t_socio *)reg;
+    return socio->dni;
+}
+
+long obtener_clave_titulo(const void *reg)
+{
+    const t_titulo *titulo = (const t_titulo *)reg;
+    return (long)titulo->id;
+}
