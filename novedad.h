@@ -20,6 +20,15 @@ int novedades_procesar(t_indice *indice, const char *path_novedades,
 /*            FUNCIONES A IMPLEMENTAR POR EL ALUMNO (version _ALU)             */
 /*============================================================================*/
 
+#define TAM_MOTIVO 21
+#define MAX_RECHAZOS 100
+
+typedef struct {
+    int id;
+    char motivo[TAM_MOTIVO];
+}t_rechazo;
+
+
 int novedades_procesar_ALU(t_indice *indice, const char *path_novedades,
                        const char *path_titulos, const t_fecha *fecha_proceso);
 

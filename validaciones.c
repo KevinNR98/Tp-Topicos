@@ -45,3 +45,8 @@ int email_valido_ALU(const char *email)
        funcion de la biblioteca que tenga version _ALU. */
     return email_valido(email);
 }
+
+int validar_dni(const long dni)
+{
+    return (dni > 1000000 && dni < 100000000);
+}

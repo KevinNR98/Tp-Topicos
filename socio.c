@@ -450,10 +450,43 @@ Observaciones:  -
 ******************************************************************************/
 int socio_baja_ALU(t_indice *indice, const char *path)
 {
-    /* TODO: reemplazar esta llamada a la funcion de la catedra por su propia
-       implementacion. En la entrega no puede quedar ninguna llamada a una
-       funcion de la biblioteca que tenga version _ALU. */
-    return socio_baja(indice, path);
+    char cadena[10];
+    t_reg_indice reg_eliminar;
+    char extra;
+    int pos;
+
+    puts("Ingrese el DNI del socio que quiere eliminar.");
+    carga_manual("\nDNI: ", cadena, sizeof(cadena));
+
+    if(sscanf(cadena, "%ld%c", &reg_eliminar.id, &extra) != 1 || !validar_dni(reg_eliminar.id))
+    {
+        puts("El DNI ingresado es invalido.");
+        return ERROR;
+    }
+
+    pos = indice_buscar_ALU(indice, &reg_eliminar, sizeof(t_reg_indice), compara_reg_indice_ALU);
+    if(pos == NO_EXISTE)
+    {
+        puts("El DNI ingresado no pertenece a un socio registrado o ya fue dado de baja.");
+        return NO_EXISTE;
+    }
+
+    FILE *pf = fopen(path, "r+b");
+
+    if(!pf)
+        return ERROR;
+
+    t_socio socio;
+
+    socio_leer_ALU(pf, reg_eliminar.nro_reg, &socio);
+    socio.estado = 'B';
+    socio_escribir_ALU(pf, reg_eliminar.nro_reg, &socio);
+
+    fclose(pf);
+
+    indice_eliminar_ALU(indice, &reg_eliminar, sizeof(t_reg_indice), compara_reg_indice_ALU);
+
+    return OK;
 }
 
 /******************************************************************************
