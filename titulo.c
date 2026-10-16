@@ -61,3 +61,11 @@ int titulos_listar_ALU(const t_indice *indice, const char *path)
        funcion de la biblioteca que tenga version _ALU. */
     return titulos_listar(indice, path);
 }
+
+/// es_activo de TDA indice
+int es_titulo_activo(const void *registro)
+{
+    const t_titulo *titulo = (const t_titulo *)registro;
+
+    return titulo->estado == 'A';
+}

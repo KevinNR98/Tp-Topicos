@@ -528,7 +528,6 @@ void abm_socio_ALU(t_indice *indice, const t_fecha *fecha_proceso)
 
 void rechazar_socio(const void *reg, const char *linea, const char *tipo_error, const t_fecha *fecha_proc)
 {
-    FILE *pf = fopen(ARCH_ERRORES, "a+");
 
     if(strcmp(tipo_error, "DNI") == 0)
     {
@@ -538,15 +537,16 @@ void rechazar_socio(const void *reg, const char *linea, const char *tipo_error, 
         strcat(dni, ";");
         aux = strchr(dni, ';');
         *aux = '\0';
-        fprintf(pf, "%s;%s;%d/%d/%d\n", dni, tipo_error, fecha_proc->dia, fecha_proc->mes, fecha_proc->anio);
+        auditoria_registrar_ALU(ARCH_ERRORES, dni, tipo_error, fecha_proc);
     }
     else
     {
         const t_socio *socio = reg;
-        fprintf(pf, "%ld;%s;%d/%d/%d\n", socio->dni, tipo_error, fecha_proc->dia, fecha_proc->mes, fecha_proc->anio);
+        char dni_texto[TAM_DNI];
+        sprintf(dni_texto, "%ld", socio->dni);
+        auditoria_registrar_ALU(ARCH_ERRORES, dni_texto, tipo_error, fecha_proc);
     }
 
-    fclose(pf);
 }
 
 void mostrar_socio(const t_socio *socio)
@@ -555,4 +555,12 @@ void mostrar_socio(const t_socio *socio)
            socio->dni, socio->cuil, socio->apellidos_nombres,socio->fecha_nacimiento.dia, socio->fecha_nacimiento.mes, socio->fecha_nacimiento.anio, socio->sexo, socio->fecha_afiliacion.dia,
            socio->fecha_afiliacion.mes, socio->fecha_afiliacion.anio, socio->categoria, socio->fecha_ultima_cuota.dia, socio->fecha_ultima_cuota.mes, socio->fecha_ultima_cuota.anio, socio->plan,
            socio->email_tutor, socio->estado);
+}
+
+/// es_activo de TDA indice
+int es_socio_activo(const void *registro)
+{
+    const t_socio *socio = (const t_socio *)registro;
+
+    return socio->estado == 'A';
 }

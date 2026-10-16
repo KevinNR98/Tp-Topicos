@@ -49,7 +49,7 @@ int leer_archivo_texto_ALU(const char *path_txt, FILE *arch_bin, t_indice *indic
     *rechazados = 0;
 
     char linea[TAM_LINEA + 1];
-    char error_msg[256];
+    char error_msg[TAM_TIPO_ERROR];
 
     // Armar el contexto que se compartirá en cada validación
     t_contexto ctx;
@@ -65,7 +65,7 @@ int leer_archivo_texto_ALU(const char *path_txt, FILE *arch_bin, t_indice *indic
         // Parsear la línea al buffer de registro
         if (parsear(linea, reg) != OK) //
         {
-            rechazar(reg, linea, "Error de formato", fecha_proceso);
+            rechazar(reg, linea, "FORMATO", fecha_proceso);
             (*rechazados)++;
             continue;
         }
@@ -92,7 +92,7 @@ int leer_archivo_texto_ALU(const char *path_txt, FILE *arch_bin, t_indice *indic
 
         if (indice_insertar(indice, &reg_ind, sizeof(t_reg_indice), compara_reg_indice_ALU) != OK)
         {
-            rechazar(reg, "Clave duplicada en indice", "Duplicado", fecha_proceso);
+            rechazar(reg, linea, "DNI", fecha_proceso);
             (*rechazados)++;
             continue;
         }
@@ -114,10 +114,15 @@ Observaciones:  Se usa como cmp en todas las operaciones del TDA indice.
 ******************************************************************************/
 int compara_reg_indice_ALU(const void *a, const void *b)
 {
-    /* TODO: reemplazar esta llamada a la funcion de la catedra por su propia
-       implementacion. En la entrega no puede quedar ninguna llamada a una
-       funcion de la biblioteca que tenga version _ALU. */
-    return compara_reg_indice(a, b);
+    const t_reg_indice *reg_a = (const t_reg_indice *)a;
+    const t_reg_indice *reg_b = (const t_reg_indice *)b;
+
+    if (reg_a->id < reg_b->id)
+        return -1;
+    if (reg_a->id > reg_b->id)
+        return 1;
+
+    return 0;
 }
 
 /******************************************************************************
@@ -209,12 +214,12 @@ int parsear_socio(const char *linea, void *reg)
     return OK;
 }
 
-void ignorar_rechazo_titulo(const void *reg, const char *tipo_error, const char *detalle, const t_fecha *fecha_proceso)
+void ignorar_rechazo_titulo(const void *reg, const char *linea, const char *tipo_error, const t_fecha *fecha_proceso)
 {
     // Ignoramos los titulos rechazados
     (void)reg;
     (void)tipo_error;
-    (void)detalle;
+    (void)linea;
     (void)fecha_proceso;
 }
 

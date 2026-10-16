@@ -18,10 +18,16 @@ Observaciones:  -
 ******************************************************************************/
 int indice_crear_ALU(t_indice *indice, size_t nmemb, size_t tamanyo)
 {
-    /* TODO: reemplazar esta llamada a la funcion de la catedra por su propia
-       implementacion. En la entrega no puede quedar ninguna llamada a una
-       funcion de la biblioteca que tenga version _ALU. */
-    return indice_crear(indice, nmemb, tamanyo);
+    indice->vindice = malloc(nmemb * tamanyo);
+    if (indice->vindice == NULL)
+    {
+        indice->cantidad_elementos_actual = 0;
+        indice->cantidad_elementos_maxima = 0;
+        return ERROR;
+    }
+    indice->cantidad_elementos_actual = 0;
+    indice->cantidad_elementos_maxima = nmemb;
+    return OK;
 }
 
 /******************************************************************************
@@ -36,10 +42,15 @@ Observaciones:  Si el producto no aumenta la capacidad (arreglos muy chicos)
 ******************************************************************************/
 int indice_redimensionar_ALU(t_indice *indice, size_t tamanyo)
 {
-    /* TODO: reemplazar esta llamada a la funcion de la catedra por su propia
-       implementacion. En la entrega no puede quedar ninguna llamada a una
-       funcion de la biblioteca que tenga version _ALU. */
-    return indice_redimensionar(indice, tamanyo);
+    size_t inc = (indice->cantidad_elementos_maxima * INCREMENTO);
+    void* temp = realloc(indice->vindice,tamanyo * inc);
+    if(temp == NULL){
+        printf("ERROR AL REDIMENSIONAR EL INDICE...");
+        return ERROR;
+    }
+    indice->cantidad_elementos_maxima=inc;
+    indice->vindice=temp;
+    return OK;
 }
 
 /******************************************************************************
@@ -56,10 +67,21 @@ Observaciones:  -
 int indice_insertar_ALU(t_indice *indice, const void *registro, size_t tamanyo,
                     int (*cmp)(const void *, const void *))
 {
-    /* TODO: reemplazar esta llamada a la funcion de la catedra por su propia
-       implementacion. En la entrega no puede quedar ninguna llamada a una
-       funcion de la biblioteca que tenga version _ALU. */
-    return indice_insertar(indice, registro, tamanyo, cmp);
+    int pos=indice_buscar_ALU(indice,(void*)registro,tamanyo,cmp);
+    if(pos!=-1)
+        return ERROR; //ya existe, no se puede insertar
+    if(indice_lleno_ALU(indice)){
+        indice_redimensionar_ALU(indice, tamanyo);
+    }
+    char* base=(char*)indice->vindice;
+    size_t i = indice->cantidad_elementos_actual;
+    while(i>0&&cmp(registro,base+(i-1)*tamanyo)<0){
+        memcpy(base+(i)*tamanyo,base+(i-1)*tamanyo,tamanyo);
+        i--;
+    }
+    memcpy(base+i*tamanyo,registro,tamanyo);
+    indice->cantidad_elementos_actual++;
+    return OK;
 }
 
 /******************************************************************************
@@ -75,10 +97,13 @@ Observaciones:  -
 int indice_eliminar_ALU(t_indice *indice, const void *registro, size_t tamanyo,
                     int (*cmp)(const void *, const void *))
 {
-    /* TODO: reemplazar esta llamada a la funcion de la catedra por su propia
-       implementacion. En la entrega no puede quedar ninguna llamada a una
-       funcion de la biblioteca que tenga version _ALU. */
-    return indice_eliminar(indice, registro, tamanyo, cmp);
+    int pos=indice_buscar_ALU(indice,(void*)registro,tamanyo,cmp);
+    if(pos==-1)
+        return ERROR;
+    char* base=(char*)indice->vindice;
+    memmove(base+pos*tamanyo,base+(pos+1)*tamanyo,(indice->cantidad_elementos_actual-pos-1)*tamanyo);
+    indice->cantidad_elementos_actual--;
+    return OK;
 }
 
 /******************************************************************************
@@ -96,10 +121,29 @@ Observaciones:  La comparacion entre claves se realiza exclusivamente mediante
 int indice_buscar_ALU(const t_indice *indice, void *registro, size_t tamanyo,
                   int (*cmp)(const void *, const void *))
 {
-    /* TODO: reemplazar esta llamada a la funcion de la catedra por su propia
-       implementacion. En la entrega no puede quedar ninguna llamada a una
-       funcion de la biblioteca que tenga version _ALU. */
-    return indice_buscar(indice, registro, tamanyo, cmp);
+    if(indice->cantidad_elementos_actual == 0)
+        return NO_EXISTE;
+
+    size_t low = 0, high = indice->cantidad_elementos_actual - 1, mid;
+    int comp_result;
+
+    while(low <= high){
+        mid = (low + high) / 2;
+        void *actual = (char *)indice->vindice + mid * tamanyo;
+        comp_result = cmp(registro, actual);
+
+        if(comp_result == 0){
+            memcpy(registro, actual, tamanyo);
+            return (int)mid;
+        }
+        else if(comp_result < 0){
+            if(mid == 0) break;
+            high = mid - 1;
+        }else{
+            low = mid + 1;
+        }
+    }
+    return NO_EXISTE;
 }
 
 /******************************************************************************
@@ -110,10 +154,9 @@ Observaciones:  -
 ******************************************************************************/
 int indice_vacio_ALU(const t_indice *indice)
 {
-    /* TODO: reemplazar esta llamada a la funcion de la catedra por su propia
-       implementacion. En la entrega no puede quedar ninguna llamada a una
-       funcion de la biblioteca que tenga version _ALU. */
-    return indice_vacio(indice);
+    if(indice->cantidad_elementos_actual==0)
+        return OK;
+    return ERROR;
 }
 
 /******************************************************************************
@@ -124,10 +167,9 @@ Observaciones:  -
 ******************************************************************************/
 int indice_lleno_ALU(const t_indice *indice)
 {
-    /* TODO: reemplazar esta llamada a la funcion de la catedra por su propia
-       implementacion. En la entrega no puede quedar ninguna llamada a una
-       funcion de la biblioteca que tenga version _ALU. */
-    return indice_lleno(indice);
+    if(indice->cantidad_elementos_actual==indice->cantidad_elementos_maxima)
+        return OK;
+    return ERROR;
 }
 
 /******************************************************************************
@@ -138,10 +180,11 @@ Observaciones:  -
 ******************************************************************************/
 void indice_vaciar_ALU(t_indice *indice)
 {
-    /* TODO: reemplazar esta llamada a la funcion de la catedra por su propia
-       implementacion. En la entrega no puede quedar ninguna llamada a una
-       funcion de la biblioteca que tenga version _ALU. */
-    indice_vaciar(indice);
+    if(indice->vindice!=NULL)
+        indice->vindice=NULL;
+
+    indice->cantidad_elementos_actual=0;
+    indice->cantidad_elementos_maxima=0;
 }
 
 /******************************************************************************
@@ -153,10 +196,14 @@ Observaciones:  Luego de invocarla el indice no puede usarse sin volver a
 ******************************************************************************/
 void indice_destruir_ALU(t_indice *indice)
 {
-    /* TODO: reemplazar esta llamada a la funcion de la catedra por su propia
-       implementacion. En la entrega no puede quedar ninguna llamada a una
-       funcion de la biblioteca que tenga version _ALU. */
-    indice_destruir(indice);
+    if (indice == NULL)
+        return;
+
+    free(indice->vindice);
+
+    indice->vindice = NULL;
+    indice->cantidad_elementos_actual = 0;
+    indice->cantidad_elementos_maxima = 0;
 }
 
 /******************************************************************************
@@ -181,8 +228,40 @@ int indice_cargar_ALU(const char *path, t_indice *indice, size_t tamanyo_reg,
                   int (*es_activo)(const void *),
                   int (*cmp)(const void *, const void *))
 {
-    /* TODO: reemplazar esta llamada a la funcion de la catedra por su propia
-       implementacion. En la entrega no puede quedar ninguna llamada a una
-       funcion de la biblioteca que tenga version _ALU. */
-    return indice_cargar(path, indice, tamanyo_reg, obtener_clave, es_activo, cmp);
+    FILE* archbin = fopen(path, "rb");
+    if(!archbin)
+        return ERROR;
+
+
+    indice_vaciar_ALU(indice);
+
+    void *registro = malloc(tamanyo_reg);
+    if(!registro) {
+        fclose(archbin);
+        return ERROR;
+    }
+
+    unsigned nro_reg = 0;
+    size_t leidos = fread(registro, tamanyo_reg, 1, archbin);
+
+    while(leidos == 1){
+        if(es_activo(registro)){
+            t_reg_indice reg_ind;
+            reg_ind.nro_reg = nro_reg;                // Posición en el archivo
+            reg_ind.id = obtener_clave(registro);    // Clave obtenida mediante la función
+
+            if(indice_insertar_ALU(indice, &reg_ind, sizeof(t_reg_indice), cmp) == ERROR) {
+                free(registro);
+                fclose(archbin);
+                return ERROR;
+            }
+        }
+
+        nro_reg++;
+        leidos = fread(registro, tamanyo_reg, 1, archbin);
+    }
+
+    free(registro);
+    fclose(archbin);
+    return OK;
 }

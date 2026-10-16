@@ -1,0 +1,137 @@
+# depslib dependency file v1.0
+1792086483 source:c:\users\iara_\onedrive\desktop\tp-topicos\alquiler.c
+	<stdlib.h>
+	<string.h>
+	"alquiler.h"
+	"cadena.h"
+	"util.h"
+
+1792086483 c:\users\iara_\onedrive\desktop\tp-topicos\alquiler.h
+	"socio.h"
+	"titulo.h"
+
+1792095608 c:\users\iara_\onedrive\desktop\tp-topicos\socio.h
+	<stdio.h>
+	"fecha.h"
+	"indice.h"
+	"lectura.h"
+	"validaciones.h"
+
+1791850869 c:\users\iara_\onedrive\desktop\tp-topicos\fecha.h
+
+1791850869 c:\users\iara_\onedrive\desktop\tp-topicos\indice.h
+	<stddef.h>
+
+1791850869 c:\users\iara_\onedrive\desktop\tp-topicos\lectura.h
+	<stdio.h>
+	"indice.h"
+	"fecha.h"
+
+1791850869 c:\users\iara_\onedrive\desktop\tp-topicos\validaciones.h
+
+1791850869 c:\users\iara_\onedrive\desktop\tp-topicos\titulo.h
+	<stdio.h>
+	"indice.h"
+	"lectura.h"
+
+1791850869 c:\users\iara_\onedrive\desktop\tp-topicos\cadena.h
+
+1792086483 c:\users\iara_\onedrive\desktop\tp-topicos\util.h
+	<stdio.h>
+	<stdlib.h>
+	"alquiler.h"
+
+1791850869 source:c:\users\iara_\onedrive\desktop\tp-topicos\cadena.c
+	<string.h>
+	<ctype.h>
+	<stddef.h>
+	"cadena.h"
+
+1792082403 source:c:\users\iara_\onedrive\desktop\tp-topicos\fecha.c
+	<stdio.h>
+	<string.h>
+	<ctype.h>
+	<time.h>
+	"fecha.h"
+	"util.h"
+	"indice.h"
+
+1791850869 source:c:\users\iara_\onedrive\desktop\tp-topicos\indice.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"indice.h"
+
+1792092872 source:c:\users\iara_\onedrive\desktop\tp-topicos\lectura.c
+	<string.h>
+	"lectura.h"
+	"util.h"
+	"cadena.h"
+	"socio.h"
+	"titulo.h"
+	"config.h"
+
+1791850869 c:\users\iara_\onedrive\desktop\tp-topicos\config.h
+
+1791850869 source:c:\users\iara_\onedrive\desktop\tp-topicos\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"config.h"
+	"util.h"
+	"menu.h"
+	"fecha.h"
+	"indice.h"
+	"lectura.h"
+	"socio.h"
+	"titulo.h"
+	"novedad.h"
+	"alquiler.h"
+	"auditoria.h"
+	"generador.h"
+
+1791850869 c:\users\iara_\onedrive\desktop\tp-topicos\menu.h
+
+1791850869 c:\users\iara_\onedrive\desktop\tp-topicos\novedad.h
+	"titulo.h"
+
+1791850869 c:\users\iara_\onedrive\desktop\tp-topicos\auditoria.h
+	"fecha.h"
+
+1791850869 c:\users\iara_\onedrive\desktop\tp-topicos\generador.h
+
+1791850869 source:c:\users\iara_\onedrive\desktop\tp-topicos\novedad.c
+	<string.h>
+	"novedad.h"
+	"cadena.h"
+
+1792095608 source:c:\users\iara_\onedrive\desktop\tp-topicos\socio.c
+	<stdlib.h>
+	<string.h>
+	<conio.h>
+	"socio.h"
+	"cadena.h"
+	"util.h"
+	"auditoria.h"
+	"config.h"
+	"menu.h"
+
+1791850869 source:c:\users\iara_\onedrive\desktop\tp-topicos\titulo.c
+	<stdlib.h>
+	<string.h>
+	"titulo.h"
+	"cadena.h"
+	"util.h"
+
+1791850869 source:c:\users\iara_\onedrive\desktop\tp-topicos\util.c
+	<string.h>
+	"util.h"
+	"cadena.h"
+	"config.h"
+
+1791850869 source:c:\users\iara_\onedrive\desktop\tp-topicos\validaciones.c
+	<ctype.h>
+	<stdio.h>
+	<string.h>
+	"validaciones.h"
+

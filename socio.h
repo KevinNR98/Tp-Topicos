@@ -7,6 +7,7 @@
 #include "lectura.h"
 #include "validaciones.h"
 
+#define TAM_DNI        9
 #define TAM_APYN      61
 #define TAM_CATEGORIA 11
 #define TAM_PLAN      11
