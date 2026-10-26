@@ -1,0 +1,146 @@
+# depslib dependency file v1.0
+1791687794 source:c:\users\kevin\downloads\tp-alumnos\tp-alumnos\alquiler.c
+	<stdlib.h>
+	<string.h>
+	"alquiler.h"
+	"cadena.h"
+	"util.h"
+
+1791687794 c:\users\kevin\downloads\tp-alumnos\tp-alumnos\alquiler.h
+	"socio.h"
+	"titulo.h"
+
+1792591759 c:\users\kevin\downloads\tp-alumnos\tp-alumnos\socio.h
+	<stdio.h>
+	"fecha.h"
+	"indice.h"
+	"lectura.h"
+	"validaciones.h"
+
+1791687794 c:\users\kevin\downloads\tp-alumnos\tp-alumnos\fecha.h
+
+1791687794 c:\users\kevin\downloads\tp-alumnos\tp-alumnos\indice.h
+	<stddef.h>
+
+1791689769 c:\users\kevin\downloads\tp-alumnos\tp-alumnos\lectura.h
+	<stdio.h>
+	"indice.h"
+	"fecha.h"
+
+1791687794 c:\users\kevin\downloads\tp-alumnos\tp-alumnos\validaciones.h
+
+1792586901 c:\users\kevin\downloads\tp-alumnos\tp-alumnos\titulo.h
+	<stdio.h>
+	"indice.h"
+	"lectura.h"
+
+1791687794 c:\users\kevin\downloads\tp-alumnos\tp-alumnos\cadena.h
+
+1791687794 c:\users\kevin\downloads\tp-alumnos\tp-alumnos\util.h
+	<stdio.h>
+	<stdlib.h>
+	"alquiler.h"
+
+1791687794 source:c:\users\kevin\downloads\tp-alumnos\tp-alumnos\auditoria.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"auditoria.h"
+	"lectura.h"
+	"cadena.h"
+	"util.h"
+	"indice.h"
+
+1791687794 c:\users\kevin\downloads\tp-alumnos\tp-alumnos\auditoria.h
+	"fecha.h"
+
+1792589088 source:c:\users\kevin\downloads\tp-alumnos\tp-alumnos\cadena.c
+	<string.h>
+	<ctype.h>
+	<stddef.h>
+	"cadena.h"
+
+1791929442 source:c:\users\kevin\downloads\tp-alumnos\tp-alumnos\fecha.c
+	<stdio.h>
+	<string.h>
+	<ctype.h>
+	<time.h>
+	"fecha.h"
+	"util.h"
+	"indice.h"
+
+1791687794 source:c:\users\kevin\downloads\tp-alumnos\tp-alumnos\indice.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"indice.h"
+
+1793046847 source:c:\users\kevin\downloads\tp-alumnos\tp-alumnos\lectura.c
+	<string.h>
+	"lectura.h"
+	"util.h"
+	"cadena.h"
+	"socio.h"
+	"titulo.h"
+	"config.h"
+
+1791687794 c:\users\kevin\downloads\tp-alumnos\tp-alumnos\config.h
+
+1791687794 source:c:\users\kevin\downloads\tp-alumnos\tp-alumnos\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"config.h"
+	"util.h"
+	"menu.h"
+	"fecha.h"
+	"indice.h"
+	"lectura.h"
+	"socio.h"
+	"titulo.h"
+	"novedad.h"
+	"alquiler.h"
+	"auditoria.h"
+	"generador.h"
+
+1791687794 c:\users\kevin\downloads\tp-alumnos\tp-alumnos\menu.h
+
+1791687794 c:\users\kevin\downloads\tp-alumnos\tp-alumnos\novedad.h
+	"titulo.h"
+
+1791687794 c:\users\kevin\downloads\tp-alumnos\tp-alumnos\generador.h
+
+1791687794 source:c:\users\kevin\downloads\tp-alumnos\tp-alumnos\novedad.c
+	<string.h>
+	"novedad.h"
+	"cadena.h"
+
+1793046139 source:c:\users\kevin\downloads\tp-alumnos\tp-alumnos\socio.c
+	<stdlib.h>
+	<string.h>
+	"socio.h"
+	"cadena.h"
+	"util.h"
+	"auditoria.h"
+	"config.h"
+	"menu.h"
+
+1793046185 source:c:\users\kevin\downloads\tp-alumnos\tp-alumnos\titulo.c
+	<stdlib.h>
+	<string.h>
+	"titulo.h"
+	"cadena.h"
+	"util.h"
+
+1791687794 source:c:\users\kevin\downloads\tp-alumnos\tp-alumnos\util.c
+	<string.h>
+	"util.h"
+	"cadena.h"
+	"config.h"
+
+1793046223 source:c:\users\kevin\downloads\tp-alumnos\tp-alumnos\validaciones.c
+	<ctype.h>
+	<stdio.h>
+	<string.h>
+	"validaciones.h"
+
