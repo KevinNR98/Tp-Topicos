@@ -10,6 +10,11 @@
 #define CAMPOS_TITULO 4
 #define CANT_GENEROS  5
 
+#define TIPO_ERR_ID     "ID"
+#define TIPO_ERR_TITULO "TITULO"
+#define TIPO_ERR_GENERO "GENERO"
+#define TIPO_ERR_STOCK  "STOCK"
+
 typedef struct
 {
     int  id;

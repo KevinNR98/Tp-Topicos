@@ -41,10 +41,69 @@ int leer_archivo_texto_ALU(const char *path_txt, FILE *arch_bin, t_indice *indic
                        long (*obtener_clave)(const void *),
                        unsigned *aceptados, unsigned *rechazados)
 {
-    /* TODO: reemplazar esta llamada a la funcion de la catedra por su propia
-       implementacion. En la entrega no puede quedar ninguna llamada a una
-       funcion de la biblioteca que tenga version _ALU. */
-    return leer_archivo_texto(path_txt, arch_bin, indice, reg, tamanyo, fecha_proceso, parsear, validar, rechazar, obtener_clave, aceptados, rechazados);
+    FILE *pf = fopen(path_txt, "rt");
+    if (!pf)
+        return ERROR;
+
+    *aceptados = 0;
+    *rechazados = 0;
+
+    char linea[TAM_LINEA + 1];
+    char error_msg[TAM_TIPO_ERROR];
+
+    // Armar el contexto que se compartirá en cada validación
+    t_contexto ctx;
+    ctx.indice = indice;
+    ctx.arch_bin = arch_bin;
+    ctx.fecha_proceso = fecha_proceso;
+    ctx.id_modificando = 0; // 0 porque son altas masivas desde el archivo de texto
+
+    // Recorrer el archivo de texto línea por línea
+    while (fgets(linea, sizeof(linea), pf))
+    {
+
+        // Parsear la línea al buffer de registro
+        if (parsear(linea, reg) != OK) //
+        {
+            rechazar(reg, linea, "FORMATO", fecha_proceso);
+            (*rechazados)++;
+            continue;
+        }
+
+        // Validar el registro pasándole el contexto
+        if (validar(reg, &ctx, error_msg) != OK)
+        {
+            rechazar(reg, linea, error_msg, fecha_proceso);
+            (*rechazados)++;
+            continue;
+        }
+
+        fseek(arch_bin, 0L, SEEK_END);
+
+        long pos = ftell(arch_bin);
+        unsigned nro_reg = pos / tamanyo;
+
+        fwrite(reg, tamanyo, 1, arch_bin);
+
+        // Insertar en el índice en memoria
+        t_reg_indice reg_ind;
+        reg_ind.nro_reg = nro_reg;
+        reg_ind.id = obtener_clave(reg);
+
+        if (indice_insertar(indice, &reg_ind, sizeof(t_reg_indice), compara_reg_indice_ALU) != OK)
+        {
+            rechazar(reg, linea, "DNI", fecha_proceso);
+            (*rechazados)++;
+            continue;
+        }
+
+        (*aceptados)++;
+    }
+
+    fclose(pf);
+    return OK;
+
+    //return leer_archivo_texto(path_txt, arch_bin, indice, reg, tamanyo, fecha_proceso, parsear, validar, rechazar, obtener_clave, aceptados, rechazados);
 }
 
 /******************************************************************************
@@ -55,10 +114,15 @@ Observaciones:  Se usa como cmp en todas las operaciones del TDA indice.
 ******************************************************************************/
 int compara_reg_indice_ALU(const void *a, const void *b)
 {
-    /* TODO: reemplazar esta llamada a la funcion de la catedra por su propia
-       implementacion. En la entrega no puede quedar ninguna llamada a una
-       funcion de la biblioteca que tenga version _ALU. */
-    return compara_reg_indice(a, b);
+    const t_reg_indice *reg_a = (const t_reg_indice *)a;
+    const t_reg_indice *reg_b = (const t_reg_indice *)b;
+
+    if (reg_a->id < reg_b->id)
+        return -1;
+    if (reg_a->id > reg_b->id)
+        return 1;
+
+    return 0;
 }
 
 /******************************************************************************
@@ -96,4 +160,77 @@ int generar_binarios_ALU(t_indice *ind_socios, t_indice *ind_titulos, const t_fe
        implementacion. En la entrega no puede quedar ninguna llamada a una
        funcion de la biblioteca que tenga version _ALU. */
     return generar_binarios(ind_socios, ind_titulos, fecha_proceso);
+}
+////////////////////////////////////////////////////////////////////
+
+int parsear_titulo(const char *linea, void *reg)
+{
+    t_titulo *titulo = (t_titulo *)reg;
+
+    int leidos = sscanf(linea, "%d;%60[^;];%20[^;];%d", &titulo->id, titulo->titulo, titulo->genero, &titulo->stock);
+
+    if (leidos != 4)
+        return ERROR;
+
+    titulo->estado = 'A';
+
+    return OK;
+}
+
+int parsear_socio(const char *linea, void *reg)
+{
+    t_socio *socio = (t_socio *)reg;
+
+    // Inicializamos el email por si viene vacío en la línea
+    socio->email_tutor[0] = '\0';
+
+    // sscanf intentará leer los 16 elementos (contando día/mes/año por separado)
+    int leidos = sscanf(linea, "%ld;%13[^;];%60[^;];%d/%d/%d;%c;%d/%d/%d;%10[^;];%d/%d/%d;%10[^;];%30[^\r\n]",
+                        &socio->dni,
+                        socio->cuil,
+                        socio->apellidos_nombres,
+                        &socio->fecha_nacimiento.dia,
+                        &socio->fecha_nacimiento.mes,
+                        &socio->fecha_nacimiento.anio,
+                        &socio->sexo,
+                        &socio->fecha_afiliacion.dia,
+                        &socio->fecha_afiliacion.mes,
+                        &socio->fecha_afiliacion.anio,
+                        socio->categoria,
+                        &socio->fecha_ultima_cuota.dia,
+                        &socio->fecha_ultima_cuota.mes,
+                        &socio->fecha_ultima_cuota.anio,
+                        socio->plan,
+                        socio->email_tutor);
+
+    // Como el email_tutor es opcional al final, sscanf puede retornar 15 (si no viene el email)
+    // o 16 (si viene completo). Por eso exigimos que al menos lea los primeros 15 campos obligatorios.
+    if (leidos < 15)
+        return ERROR;
+
+
+    socio->estado = 'A';
+
+    return OK;
+}
+
+void ignorar_rechazo_titulo(const void *reg, const char *linea, const char *tipo_error, const t_fecha *fecha_proceso)
+{
+    // Ignoramos los titulos rechazados
+    (void)reg;
+    (void)tipo_error;
+    (void)linea;
+    (void)fecha_proceso;
+}
+
+long obtener_clave_socio(const void *reg)
+{
+    const t_socio *socio = (const t_socio *)reg;
+    return socio->dni;
+}
+
+long obtener_clave_titulo(const void *reg)
+{
+    const t_titulo *titulo = (const t_titulo *)reg;
+    return (long)titulo->id;
 }

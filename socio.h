@@ -23,6 +23,17 @@
 #define CANT_PLANES 4
 #define DIA_LIMITE_CUOTA 10
 
+#define TIPO_ERR_DNI                 "DNI"
+#define TIPO_ERR_SEXO                "SEXO"
+#define TIPO_ERR_CUIL                "CUIL"
+#define TIPO_ERR_APELLIDOS_NOMBRES   "APELLIDOS_NOMBRES"
+#define TIPO_ERR_FECHA_NACIMIENTO    "FECHA_NACIMIENTO"
+#define TIPO_ERR_FECHA_AFILIACION    "FECHA_AFILIACION"
+#define TIPO_ERR_CATEGORIA           "CATEGORIA"
+#define TIPO_ERR_FECHA_ULTIMA_CUOTA  "FECHA_ULTIMA_CUOTA"
+#define TIPO_ERR_PLAN                "PLAN"
+#define TIPO_ERR_EMAIL_TUTOR         "EMAIL_TUTOR"
+
 typedef struct
 {
     long    dni;
@@ -84,5 +95,4 @@ int socios_listar_ALU(const t_indice *indice, const char *path);
 int socios_exportar_ALU(const t_indice *indice, const char *path, const char *path_export,
                     const t_fecha *fecha_proceso);
 void abm_socio_ALU(t_indice *indice, const t_fecha *fecha_proceso);
-
 #endif /* SOCIO_H_INCLUDED */
