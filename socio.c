@@ -8,6 +8,10 @@
 #include "config.h"
 #include "menu.h"
 
+static char parsear_sexo(const char *cad);
+static long parsear_dni(const char *cad);
+static int dni_duplicado(const t_contexto *ctx, long dni);
+
 /*============================================================================*/
 /*            FUNCIONES A IMPLEMENTAR POR EL ALUMNO (version _ALU)             */
 /*============================================================================*/
@@ -25,10 +29,55 @@ Observaciones:  Se pasa por puntero como parsear a leer_archivo_texto.
 ******************************************************************************/
 int texto_a_socio_ALU(const char *linea, void *reg)
 {
-    /* TODO: reemplazar esta llamada a la funcion de la catedra por su propia
-       implementacion. En la entrega no puede quedar ninguna llamada a una
-       funcion de la biblioteca que tenga version _ALU. */
-    return texto_a_socio(linea, reg);
+    if(!linea || !reg)
+        return ERROR;
+
+    t_socio *socio = (t_socio*)reg;
+    char buff[TAM_LINEA];
+    char *campos[CAMPOS_SOCIO + 1]; //Por si la linea que leemos tiene campos de mas
+
+    copiar_cadena(buff, linea,sizeof(buff));
+    quitar_salto(buff);
+
+    int cant = separar_campos_ALU(buff, campos, CAMPOS_SOCIO + 1);
+    if(cant != CAMPOS_SOCIO)
+        return ERROR;
+
+    //dni
+    socio->dni = parsear_dni(campos[0]);
+
+    //cuil
+    copiar_cadena(socio->cuil, campos[1], sizeof(socio->cuil));
+
+    //AyN
+    copiar_cadena(socio->apellidos_nombres, campos[2], sizeof(socio->apellidos_nombres));
+
+    //fecha nac
+    texto_a_fecha(campos[3], &socio->fecha_nacimiento);
+
+    //sexo
+    socio->sexo = parsear_sexo(campos[4]);
+
+    //fecha de afiliacion
+    texto_a_fecha(campos[5], &socio->fecha_afiliacion);
+
+    //categoria
+    copiar_cadena(socio->categoria, campos[6], sizeof(socio->categoria));
+
+    //fecha de ultima cuota paga
+    texto_a_fecha(campos[7], &socio->fecha_ultima_cuota);
+
+    //plan
+    copiar_cadena(socio->plan, campos[8], sizeof(socio->plan));
+
+    //email tutor
+    copiar_cadena(socio->email_tutor, campos[9], sizeof(socio->email_tutor));
+
+    //estado inicial
+    socio->estado = 'A';
+
+
+    return OK;
 }
 
 /******************************************************************************
@@ -48,10 +97,114 @@ Observaciones:  Si ctx->id_modificando == dni no se considera duplicado y se
 ******************************************************************************/
 int valida_socio_ALU(void *reg, const t_contexto *ctx, char *tipo_error)
 {
-    /* TODO: reemplazar esta llamada a la funcion de la catedra por su propia
-       implementacion. En la entrega no puede quedar ninguna llamada a una
-       funcion de la biblioteca que tenga version _ALU. */
-    return valida_socio(reg, ctx, tipo_error);
+    if(!reg || !ctx || !tipo_error)
+        return ERROR;
+
+    t_socio *socio = (t_socio*)reg;
+
+    //1.dni
+    if(socio->dni <= DNI_MIN || socio->dni >= DNI_MAX ||dni_duplicado(ctx, socio->dni))
+    {
+        copiar_cadena(tipo_error, TIPO_ERR_DNI, TAM_TIPO_ERROR);
+        return ERROR;
+    }
+
+    //2.sexo
+    if(socio->sexo != 'H' && socio->sexo != 'M')
+    {
+        copiar_cadena(tipo_error, TIPO_ERR_SEXO, TAM_TIPO_ERROR);
+        return ERROR;
+    }
+
+    //3.cuil
+    char cuil[TAM_CUIL];
+    calcular_cuil_ALU(socio->dni, socio->sexo, cuil);
+    if(strcmp(socio->cuil, cuil) != 0)
+    {
+        copiar_cadena(tipo_error, TIPO_ERR_CUIL, TAM_TIPO_ERROR);
+        return ERROR;
+    }
+
+    //4. apellido y nombre
+    arreglar_apyn_ALU(socio->apellidos_nombres);
+    if(*socio->apellidos_nombres == '\0')
+    {
+        copiar_cadena(tipo_error, TIPO_ERR_APELLIDOS_NOMBRES, TAM_TIPO_ERROR);
+        return ERROR;
+    }
+
+    //5. fecha de nacimiento
+    if(!fecha_correcta(&socio->fecha_nacimiento) ||
+            compara_fechas(&socio->fecha_nacimiento, ctx->fecha_proceso) >= 0 ||
+            edad(&socio->fecha_nacimiento, ctx->fecha_proceso) < EDAD_MINIMA)
+    {
+        copiar_cadena(tipo_error, TIPO_ERR_FECHA_NACIMIENTO, TAM_TIPO_ERROR);
+        return ERROR;
+    }
+
+    //6. fecha de afiliacion
+    if(!fecha_correcta(&socio->fecha_afiliacion) ||
+            compara_fechas(&socio->fecha_afiliacion, &socio->fecha_nacimiento) <= 0 ||
+            compara_fechas(&socio->fecha_afiliacion, ctx->fecha_proceso) > 0)
+    {
+        copiar_cadena(tipo_error, TIPO_ERR_FECHA_AFILIACION, TAM_TIPO_ERROR);
+        return ERROR;
+    }
+
+    //7.categoria
+    int e = edad(&socio->fecha_nacimiento, ctx->fecha_proceso);
+    int es_menor = (strcmp(socio->categoria, CAT_MENOR) == 0);
+    int es_adulto = (strcmp(socio->categoria, CAT_ADULTO) == 0);
+
+    if((!es_menor && !es_adulto) ||
+       (es_menor && e >= EDAD_ADULTO) ||
+       (es_adulto && e < EDAD_ADULTO))
+    {
+        copiar_cadena(tipo_error, TIPO_ERR_CATEGORIA, TAM_TIPO_ERROR);
+        return ERROR;
+    }
+
+
+    //8. fecha de ultima cuota paga
+    if(!fecha_correcta(&socio->fecha_ultima_cuota) ||
+            compara_fechas(&socio->fecha_ultima_cuota, &socio->fecha_afiliacion) < 0 ||
+            compara_fechas(&socio->fecha_ultima_cuota, ctx->fecha_proceso) > 0)
+    {
+        copiar_cadena(tipo_error, TIPO_ERR_FECHA_ULTIMA_CUOTA, TAM_TIPO_ERROR);
+        return ERROR;
+    }
+
+    //9.plan
+    if(plan_indice(socio->plan) == NO_EXISTE)
+    {
+        copiar_cadena(tipo_error, TIPO_ERR_PLAN, TAM_TIPO_ERROR);
+        return ERROR;
+    }
+
+    //10.email tutor
+    if(es_adulto)
+    {
+        if(*(socio->email_tutor) != '\0')
+        {
+            copiar_cadena(tipo_error, TIPO_ERR_EMAIL_TUTOR, TAM_TIPO_ERROR);
+            return ERROR;
+        }
+    }
+    else //menor
+    {
+        if(*(socio->email_tutor) == '\0' ||
+           !email_valido_ALU(socio->email_tutor) ||
+           socio_email_existe(ctx->arch_bin, ctx->indice, socio->email_tutor, ctx->id_modificando))
+        {
+            copiar_cadena(tipo_error, TIPO_ERR_EMAIL_TUTOR, TAM_TIPO_ERROR);
+            return ERROR;
+        }
+    }
+
+    //si paso todas las validaciones
+    *tipo_error = '\0';
+
+    return OK;
 }
 
 /******************************************************************************
@@ -239,12 +392,11 @@ int socio_alta_manual_ALU(t_indice *indice, const char *path, const t_fecha *fec
     reg.nro_reg = (unsigned)(ftell(arch_bin)/sizeof(t_socio));
     indice_insertar_ALU(indice, &reg, sizeof(t_reg_indice), compara_reg_indice_ALU);
     fwrite(&socio, sizeof(t_socio), 1, arch_bin);
-    fflush(arch_bin);
 
     fclose(arch_bin);
 
     puts("\n========== NUEVO SOCIO ==========");
-    mostrar_socio(&socio);
+    socio_mostrar(&socio);
     puts("=================================");
 
     return OK;
@@ -608,25 +760,22 @@ void abm_socio_ALU(t_indice *indice, const t_fecha *fecha_proceso)
     }
 }
 
-int es_activo_socio(const void *registro)
+long obtener_clave_socio(const void *reg)
 {
-    const t_socio *socio = registro;
+    const t_socio *socio = (const t_socio *)reg;
+    return socio->dni;
+}
+
+int es_socio_activo(const void *registro)
+{
+    const t_socio *socio = (const t_socio *)registro;
 
     return socio->estado == 'A';
 }
 
-long obtener_clave_socio(const void *registro)
-{
-    const t_socio *socio = registro;
-
-    return socio->dni;
-}
-
 void rechazar_socio(const void *reg, const char *linea, const char *tipo_error, const t_fecha *fecha_proc)
 {
-    FILE *pf = fopen(ARCH_ERRORES, "a+");
-
-    if(strcmp(tipo_error, "DNI") == 0)
+    if(strcmp(tipo_error, "DNI") == 0 || strcmp(tipo_error, "FORMATO") == 0)
     {
         char dni[TAM_LINEA];
         strcpy(dni, linea);
@@ -634,21 +783,50 @@ void rechazar_socio(const void *reg, const char *linea, const char *tipo_error, 
         strcat(dni, ";");
         aux = strchr(dni, ';');
         *aux = '\0';
-        fprintf(pf, "%s;%s;%d/%d/%d\n", dni, tipo_error, fecha_proc->dia, fecha_proc->mes, fecha_proc->anio);
+        auditoria_registrar_ALU(ARCH_ERRORES, dni, tipo_error, fecha_proc);
     }
     else
     {
         const t_socio *socio = reg;
-        fprintf(pf, "%ld;%s;%d/%d/%d\n", socio->dni, tipo_error, fecha_proc->dia, fecha_proc->mes, fecha_proc->anio);
+        char dni_texto[TAM_DNI];
+        sprintf(dni_texto, "%ld", socio->dni);
+        auditoria_registrar_ALU(ARCH_ERRORES, dni_texto, tipo_error, fecha_proc);
     }
-
-    fclose(pf);
 }
 
-void mostrar_socio(const t_socio *socio)
+static long parsear_dni(const char *cad)
 {
-    printf("DNI: %ld\nCUIL: %s\nAPELLIDO Y NOMBRE: %s\nF_NAC: %d/%d/%d\nSEXO: %c\nF_AFI: %d/%d/%d\nCATEGORIA: %s\nF_UCP: %d/%d/%d\nPLAN: %s\nEMAIL TUTOR: %s\nESTADO: %c\n",
-           socio->dni, socio->cuil, socio->apellidos_nombres,socio->fecha_nacimiento.dia, socio->fecha_nacimiento.mes, socio->fecha_nacimiento.anio, socio->sexo, socio->fecha_afiliacion.dia,
-           socio->fecha_afiliacion.mes, socio->fecha_afiliacion.anio, socio->categoria, socio->fecha_ultima_cuota.dia, socio->fecha_ultima_cuota.mes, socio->fecha_ultima_cuota.anio, socio->plan,
-           socio->email_tutor, socio->estado);
+    if(!cad || !es_numero(cad))
+        return 0;
+
+    if(*cad == '-')
+        return 0;
+
+    int cant = strlen(cad);
+    if(cant < 1 || cant > 8)
+        return 0;
+
+    return atol(cad);
+}
+
+static char parsear_sexo(const char *cad)
+{
+    if(!cad || *cad == '\0' || *(cad + 1) != '\0')
+        return '?';
+
+    if(*cad == 'H' || *cad == 'M')
+        return *cad;
+
+    return '?';
+}
+
+static int dni_duplicado(const t_contexto *ctx, long dni)
+{
+    if(ctx->id_modificando == dni)//si se esta modificando este mismo socio no cuenta como duplicado
+        return 0;
+
+    t_reg_indice reg_ind;
+    reg_ind.id = dni;
+
+    return (indice_buscar(ctx->indice, &reg_ind, sizeof(t_reg_indice),compara_reg_indice_ALU) != NO_EXISTE);
 }

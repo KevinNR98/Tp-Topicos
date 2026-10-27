@@ -15,6 +15,8 @@ void copiar_cadena(char *dest, const char *orig, size_t tam);
 /*            FUNCIONES A IMPLEMENTAR POR EL ALUMNO (version _ALU)             */
 /*============================================================================*/
 
+#define MAX_STR 61
+
 void arreglar_apyn_ALU(char *s);
 int separar_campos_ALU(char *linea, char *campos[], int max);
 

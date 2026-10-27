@@ -28,8 +28,8 @@ typedef struct {
     char motivo[TAM_MOTIVO];
 }t_rechazo;
 
-
 int novedades_procesar_ALU(t_indice *indice, const char *path_novedades,
                        const char *path_titulos, const t_fecha *fecha_proceso);
 
 #endif /* NOVEDAD_H_INCLUDED */
+

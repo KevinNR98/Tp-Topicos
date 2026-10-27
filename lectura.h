@@ -40,6 +40,8 @@ int generar_binarios(t_indice *ind_socios, t_indice *ind_titulos, const t_fecha 
 /*            FUNCIONES A IMPLEMENTAR POR EL ALUMNO (version _ALU)             */
 /*============================================================================*/
 
+#define TAM_INGRESO 101
+
 int leer_archivo_texto_ALU(const char *path_txt, FILE *arch_bin, t_indice *indice,
                        void *reg, size_t tamanyo, const t_fecha *fecha_proceso,
                        int (*parsear)(const char *, void *),

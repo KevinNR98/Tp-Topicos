@@ -27,3 +27,4 @@ int email_valido_ALU(const char *email);
 int validar_dni(const long dni);
 
 #endif /* VALIDACIONES_H_INCLUDED */
+

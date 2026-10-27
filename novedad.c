@@ -117,7 +117,7 @@ int novedades_procesar_ALU(t_indice *indice, const char *path_novedades,
                 titulo.stock = novedad.titulo.stock;
 
                 fseek(f_tit, sizeof(t_titulo) * reg_buscado.nro_reg, SEEK_SET);
-                fwrite(&titulo, sizeof(t_titulo), 1, f_tit);\
+                fwrite(&titulo, sizeof(t_titulo), 1, f_tit);
                 fflush(f_tit);
                 c_exitos++;
             }

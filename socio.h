@@ -72,6 +72,19 @@ void abm_socio(t_indice *indice, const t_fecha *fecha_proceso);
 /*            FUNCIONES A IMPLEMENTAR POR EL ALUMNO (version _ALU)             */
 /*============================================================================*/
 
+#define TAM_DNI 9
+
+#define TIPO_ERR_DNI                 "DNI"
+#define TIPO_ERR_SEXO                "SEXO"
+#define TIPO_ERR_CUIL                "CUIL"
+#define TIPO_ERR_APELLIDOS_NOMBRES   "APELLIDOS_NOMBRES"
+#define TIPO_ERR_FECHA_NACIMIENTO    "FECHA_NACIMIENTO"
+#define TIPO_ERR_FECHA_AFILIACION    "FECHA_AFILIACION"
+#define TIPO_ERR_CATEGORIA           "CATEGORIA"
+#define TIPO_ERR_FECHA_ULTIMA_CUOTA  "FECHA_ULTIMA_CUOTA"
+#define TIPO_ERR_PLAN                "PLAN"
+#define TIPO_ERR_EMAIL_TUTOR         "EMAIL_TUTOR"
+
 int texto_a_socio_ALU(const char *linea, void *reg);
 int valida_socio_ALU(void *reg, const t_contexto *ctx, char *tipo_error);
 int socio_leer_ALU(FILE *arch, unsigned nro_reg, t_socio *s);
@@ -85,9 +98,8 @@ int socios_exportar_ALU(const t_indice *indice, const char *path, const char *pa
                     const t_fecha *fecha_proceso);
 void abm_socio_ALU(t_indice *indice, const t_fecha *fecha_proceso);
 
-int es_activo_socio(const void *registro);
-long obtener_clave_socio(const void *registro);
+long obtener_clave_socio(const void *reg);
+int es_socio_activo(const void *registro);
 void rechazar_socio(const void *reg, const char *linea, const char *tipo_error, const t_fecha *fecha_proc);
-void mostrar_socio(const t_socio *socio);
 
 #endif /* SOCIO_H_INCLUDED */

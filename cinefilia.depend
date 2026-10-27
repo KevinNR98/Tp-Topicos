@@ -1,16 +1,16 @@
 # depslib dependency file v1.0
-1793121079 source:c:\users\admin\downloads\grupo12\tp-topicos\alquiler.c
+1793142908 source:c:\users\admin\downloads\grupo12\tp-topicos\alquiler.c
 	<stdlib.h>
 	<string.h>
 	"alquiler.h"
 	"cadena.h"
 	"util.h"
 
-1791942622 c:\users\admin\downloads\grupo12\tp-topicos\alquiler.h
+1793142956 c:\users\admin\downloads\grupo12\tp-topicos\alquiler.h
 	"socio.h"
 	"titulo.h"
 
-1793120438 c:\users\admin\downloads\grupo12\tp-topicos\socio.h
+1793143280 c:\users\admin\downloads\grupo12\tp-topicos\socio.h
 	<stdio.h>
 	"fecha.h"
 	"indice.h"
@@ -22,26 +22,26 @@
 1791942220 c:\users\admin\downloads\grupo12\tp-topicos\indice.h
 	<stddef.h>
 
-1791942220 c:\users\admin\downloads\grupo12\tp-topicos\lectura.h
+1793143215 c:\users\admin\downloads\grupo12\tp-topicos\lectura.h
 	<stdio.h>
 	"indice.h"
 	"fecha.h"
 
-1792162055 c:\users\admin\downloads\grupo12\tp-topicos\validaciones.h
+1793143386 c:\users\admin\downloads\grupo12\tp-topicos\validaciones.h
 
-1793120492 c:\users\admin\downloads\grupo12\tp-topicos\titulo.h
+1793143303 c:\users\admin\downloads\grupo12\tp-topicos\titulo.h
 	<stdio.h>
 	"indice.h"
 	"lectura.h"
 
-1791942220 c:\users\admin\downloads\grupo12\tp-topicos\cadena.h
+1793143069 c:\users\admin\downloads\grupo12\tp-topicos\cadena.h
 
-1792016451 c:\users\admin\downloads\grupo12\tp-topicos\util.h
+1793143357 c:\users\admin\downloads\grupo12\tp-topicos\util.h
 	<stdio.h>
 	<stdlib.h>
 	"alquiler.h"
 
-1791942220 source:c:\users\admin\downloads\grupo12\tp-topicos\auditoria.c
+1793142977 source:c:\users\admin\downloads\grupo12\tp-topicos\auditoria.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -51,16 +51,17 @@
 	"util.h"
 	"indice.h"
 
-1791942220 c:\users\admin\downloads\grupo12\tp-topicos\auditoria.h
+1793143421 c:\users\admin\downloads\grupo12\tp-topicos\auditoria.h
 	"fecha.h"
+	"socio.h"
 
-1791942220 source:c:\users\admin\downloads\grupo12\tp-topicos\cadena.c
+1793143062 source:c:\users\admin\downloads\grupo12\tp-topicos\cadena.c
 	<string.h>
 	<ctype.h>
 	<stddef.h>
 	"cadena.h"
 
-1791942220 source:c:\users\admin\downloads\grupo12\tp-topicos\fecha.c
+1793143089 source:c:\users\admin\downloads\grupo12\tp-topicos\fecha.c
 	<stdio.h>
 	<string.h>
 	<ctype.h>
@@ -69,13 +70,13 @@
 	"util.h"
 	"indice.h"
 
-1791942220 source:c:\users\admin\downloads\grupo12\tp-topicos\indice.c
+1793144324 source:c:\users\admin\downloads\grupo12\tp-topicos\indice.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
 	"indice.h"
 
-1793120768 source:c:\users\admin\downloads\grupo12\tp-topicos\lectura.c
+1793143179 source:c:\users\admin\downloads\grupo12\tp-topicos\lectura.c
 	<string.h>
 	"lectura.h"
 	"util.h"
@@ -105,17 +106,17 @@
 
 1791942220 c:\users\admin\downloads\grupo12\tp-topicos\menu.h
 
-1792162145 c:\users\admin\downloads\grupo12\tp-topicos\novedad.h
+1793143241 c:\users\admin\downloads\grupo12\tp-topicos\novedad.h
 	"titulo.h"
 
 1791942220 c:\users\admin\downloads\grupo12\tp-topicos\generador.h
 
-1793121178 source:c:\users\admin\downloads\grupo12\tp-topicos\novedad.c
+1793143230 source:c:\users\admin\downloads\grupo12\tp-topicos\novedad.c
 	<string.h>
 	"novedad.h"
 	"cadena.h"
 
-1793121217 source:c:\users\admin\downloads\grupo12\tp-topicos\socio.c
+1793143265 source:c:\users\admin\downloads\grupo12\tp-topicos\socio.c
 	<stdlib.h>
 	<string.h>
 	<conio.h>
@@ -126,20 +127,20 @@
 	"config.h"
 	"menu.h"
 
-1793120477 source:c:\users\admin\downloads\grupo12\tp-topicos\titulo.c
+1793143294 source:c:\users\admin\downloads\grupo12\tp-topicos\titulo.c
 	<stdlib.h>
 	<string.h>
 	"titulo.h"
 	"cadena.h"
 	"util.h"
 
-1791942220 source:c:\users\admin\downloads\grupo12\tp-topicos\util.c
+1793143316 source:c:\users\admin\downloads\grupo12\tp-topicos\util.c
 	<string.h>
 	"util.h"
 	"cadena.h"
 	"config.h"
 
-1792162049 source:c:\users\admin\downloads\grupo12\tp-topicos\validaciones.c
+1793143373 source:c:\users\admin\downloads\grupo12\tp-topicos\validaciones.c
 	<ctype.h>
 	<stdio.h>
 	<string.h>

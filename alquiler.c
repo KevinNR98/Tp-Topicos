@@ -94,7 +94,7 @@ int alquilar_ALU(t_indice *ind_socios, t_indice *ind_titulos, const char *path_s
         return ERROR;
     }
 
-    if(indice_buscar(ind_socios, &reg_soc, sizeof(t_reg_indice), compara_reg_indice_ALU) == NO_EXISTE)
+    if(indice_buscar_ALU(ind_socios, &reg_soc, sizeof(t_reg_indice), compara_reg_indice_ALU) == NO_EXISTE)
     {
         puts("\nAlquiler rechazado: el socio no existe o esta dado de baja.");
         return ERROR;
@@ -108,7 +108,7 @@ int alquilar_ALU(t_indice *ind_socios, t_indice *ind_titulos, const char *path_s
         return ERROR;
     }
 
-    if(indice_buscar(ind_titulos, &reg_tit, sizeof(t_reg_indice), compara_reg_indice_ALU) == NO_EXISTE)
+    if(indice_buscar_ALU(ind_titulos, &reg_tit, sizeof(t_reg_indice), compara_reg_indice_ALU) == NO_EXISTE)
     {
         puts("\nAlquiler rechazado: el titulo no existe o esta dado de baja.");
         return ERROR;
@@ -153,16 +153,6 @@ int alquilar_ALU(t_indice *ind_socios, t_indice *ind_titulos, const char *path_s
     fclose(pf_socios);
 
     return OK;
-}
-
-void carga_manual(const char *mensaje, char *cadena, const size_t tam_cad)
-{
-    char *salto;
-    printf("%s", mensaje);
-    fgets(cadena, tam_cad, stdin);
-    salto = strchr(cadena, '\n');
-    if(salto)
-        *salto = '\0';
 }
 
 void sumar_alquiler_matriz(int matriz[][CANT_GENEROS], const char *plan, const char *genero)
