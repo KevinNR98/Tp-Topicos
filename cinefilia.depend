@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1791942556 source:c:\users\admin\downloads\grupo12\tp-topicos\alquiler.c
+1793121079 source:c:\users\admin\downloads\grupo12\tp-topicos\alquiler.c
 	<stdlib.h>
 	<string.h>
 	"alquiler.h"
@@ -10,7 +10,7 @@
 	"socio.h"
 	"titulo.h"
 
-1792016446 c:\users\admin\downloads\grupo12\tp-topicos\socio.h
+1793120438 c:\users\admin\downloads\grupo12\tp-topicos\socio.h
 	<stdio.h>
 	"fecha.h"
 	"indice.h"
@@ -29,7 +29,7 @@
 
 1792162055 c:\users\admin\downloads\grupo12\tp-topicos\validaciones.h
 
-1791942220 c:\users\admin\downloads\grupo12\tp-topicos\titulo.h
+1793120492 c:\users\admin\downloads\grupo12\tp-topicos\titulo.h
 	<stdio.h>
 	"indice.h"
 	"lectura.h"
@@ -75,7 +75,7 @@
 	<string.h>
 	"indice.h"
 
-1791942220 source:c:\users\admin\downloads\grupo12\tp-topicos\lectura.c
+1793120768 source:c:\users\admin\downloads\grupo12\tp-topicos\lectura.c
 	<string.h>
 	"lectura.h"
 	"util.h"
@@ -110,12 +110,12 @@
 
 1791942220 c:\users\admin\downloads\grupo12\tp-topicos\generador.h
 
-1792162115 source:c:\users\admin\downloads\grupo12\tp-topicos\novedad.c
+1793121178 source:c:\users\admin\downloads\grupo12\tp-topicos\novedad.c
 	<string.h>
 	"novedad.h"
 	"cadena.h"
 
-1792161986 source:c:\users\admin\downloads\grupo12\tp-topicos\socio.c
+1793121217 source:c:\users\admin\downloads\grupo12\tp-topicos\socio.c
 	<stdlib.h>
 	<string.h>
 	<conio.h>
@@ -126,7 +126,7 @@
 	"config.h"
 	"menu.h"
 
-1791942220 source:c:\users\admin\downloads\grupo12\tp-topicos\titulo.c
+1793120477 source:c:\users\admin\downloads\grupo12\tp-topicos\titulo.c
 	<stdlib.h>
 	<string.h>
 	"titulo.h"

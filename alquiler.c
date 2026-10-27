@@ -147,6 +147,7 @@ int alquilar_ALU(t_indice *ind_socios, t_indice *ind_titulos, const char *path_s
 
     fseek(pf_titulos, sizeof(t_titulo) * reg_tit.nro_reg, SEEK_SET);
     fwrite(&titulo, sizeof(t_titulo), 1, pf_titulos);
+    fflush(pf_titulos);
 
     fclose(pf_titulos);
     fclose(pf_socios);

@@ -61,3 +61,25 @@ int titulos_listar_ALU(const t_indice *indice, const char *path)
        funcion de la biblioteca que tenga version _ALU. */
     return titulos_listar(indice, path);
 }
+
+int es_activo_titulo(const void *registro)
+{
+    const t_titulo *titulo = registro;
+
+    return titulo->estado == 'A';
+}
+
+long obtener_clave_titulo(const void *registro)
+{
+    const t_titulo *titulo = registro;
+
+    return titulo->id;
+}
+
+void rechazar_titulo(const void *reg, const char *linea, const char *tipo_error, const t_fecha *fecha_proc)
+{
+    (void)reg;
+    (void)tipo_error;
+    (void)linea;
+    (void)fecha_proc;
+}

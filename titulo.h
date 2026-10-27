@@ -47,4 +47,8 @@ int texto_a_titulo_ALU(const char *linea, void *reg);
 int valida_titulo_ALU(void *reg, const t_contexto *ctx, char *tipo_error);
 int titulos_listar_ALU(const t_indice *indice, const char *path);
 
+int es_activo_titulo(const void *registro);
+long obtener_clave_titulo(const void *registro);
+void rechazar_titulo(const void *reg, const char *linea, const char *tipo_error, const t_fecha *fecha_proc);
+
 #endif /* TITULO_H_INCLUDED */

@@ -62,6 +62,7 @@ int novedades_procesar_ALU(t_indice *indice, const char *path_novedades,
                 fseek(f_tit, 0, SEEK_END);
                 reg_buscado.nro_reg = (unsigned)(ftell(f_tit) / sizeof(t_titulo));
                 fwrite(&novedad.titulo, sizeof(t_titulo), 1, f_tit);
+                fflush(f_tit);
                 indice_insertar(indice, &reg_buscado, sizeof(t_reg_indice), compara_reg_indice_ALU);
                 c_exitos++;
             }
@@ -81,6 +82,7 @@ int novedades_procesar_ALU(t_indice *indice, const char *path_novedades,
                 titulo.estado = 'B';
                 fseek(f_tit, sizeof(t_titulo) * reg_buscado.nro_reg, SEEK_SET);
                 fwrite(&titulo, sizeof(t_titulo), 1, f_tit);
+                fflush(f_tit);
                 indice_eliminar_ALU(indice, &reg_buscado, sizeof(t_reg_indice), compara_reg_indice_ALU);
                 c_exitos++;
             }
@@ -115,7 +117,8 @@ int novedades_procesar_ALU(t_indice *indice, const char *path_novedades,
                 titulo.stock = novedad.titulo.stock;
 
                 fseek(f_tit, sizeof(t_titulo) * reg_buscado.nro_reg, SEEK_SET);
-                fwrite(&titulo, sizeof(t_titulo), 1, f_tit);
+                fwrite(&titulo, sizeof(t_titulo), 1, f_tit);\
+                fflush(f_tit);
                 c_exitos++;
             }
             else

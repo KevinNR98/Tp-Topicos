@@ -105,10 +105,23 @@ Observaciones:  -
 ******************************************************************************/
 int cuota_al_dia_ALU(const t_fecha *ultima_cuota, const t_fecha *fecha_proceso)
 {
-    /* TODO: reemplazar esta llamada a la funcion de la catedra por su propia
-       implementacion. En la entrega no puede quedar ninguna llamada a una
-       funcion de la biblioteca que tenga version _ALU. */
-    return cuota_al_dia(ultima_cuota, fecha_proceso);
+    if(ultima_cuota->anio == fecha_proceso->anio)
+    {
+        if(ultima_cuota->mes == fecha_proceso->mes)
+            return 1;
+        else if(ultima_cuota->mes == (fecha_proceso->mes - 1) && fecha_proceso->dia <= DIA_LIMITE_CUOTA)
+            return 1;
+    }
+
+    //Ultima cuota en diciembre y fecha proceso enero
+    else if(ultima_cuota->anio == (fecha_proceso->anio - 1))
+    {
+        if((fecha_proceso->mes == 1) && (ultima_cuota->mes == 12))
+            if(fecha_proceso->dia <= DIA_LIMITE_CUOTA)
+                return 1;
+    }
+
+    return 0;
 }
 
 /******************************************************************************
@@ -226,6 +239,7 @@ int socio_alta_manual_ALU(t_indice *indice, const char *path, const t_fecha *fec
     reg.nro_reg = (unsigned)(ftell(arch_bin)/sizeof(t_socio));
     indice_insertar_ALU(indice, &reg, sizeof(t_reg_indice), compara_reg_indice_ALU);
     fwrite(&socio, sizeof(t_socio), 1, arch_bin);
+    fflush(arch_bin);
 
     fclose(arch_bin);
 
@@ -520,10 +534,45 @@ Observaciones:  -
 int socios_exportar_ALU(const t_indice *indice, const char *path, const char *path_export,
                     const t_fecha *fecha_proceso)
 {
-    /* TODO: reemplazar esta llamada a la funcion de la catedra por su propia
-       implementacion. En la entrega no puede quedar ninguna llamada a una
-       funcion de la biblioteca que tenga version _ALU. */
-    return socios_exportar(indice, path, path_export, fecha_proceso);
+    FILE *arch_socios = fopen(path, "rb");
+
+    if(!arch_socios)
+        return ERROR;
+
+    FILE *arch_beta = fopen(path_export, "wb");
+
+    if(!arch_beta)
+    {
+        fclose(arch_socios);
+        return ERROR;
+    }
+
+    t_reg_indice *reg = indice->vindice;
+    t_socio socio;
+    int cant=0;
+
+    for(unsigned i=0; i < indice->cantidad_elementos_actual; i++, reg++)
+    {
+        fseek(arch_socios, sizeof(t_socio) * reg->nro_reg, SEEK_SET);
+        fread(&socio, sizeof(t_socio), 1, arch_socios);
+
+        if(strcmp(socio.plan, "PREMIUM") == 0 || strcmp(socio.plan, "VIP") == 0)
+        {
+            if(cuota_al_dia_ALU(&socio.fecha_ultima_cuota, fecha_proceso))
+            {
+                fwrite(&socio, sizeof(t_socio), 1, arch_beta);
+                fflush(arch_beta);
+                cant++;
+            }
+        }
+    }
+
+    fclose(arch_beta);
+    fclose(arch_socios);
+
+    printf("Socios exportados a %s: %d\n", path_export, cant);
+
+    return OK;
 }
 
 /******************************************************************************
@@ -557,6 +606,20 @@ void abm_socio_ALU(t_indice *indice, const t_fecha *fecha_proceso)
         putchar('\n');
         break;
     }
+}
+
+int es_activo_socio(const void *registro)
+{
+    const t_socio *socio = registro;
+
+    return socio->estado == 'A';
+}
+
+long obtener_clave_socio(const void *registro)
+{
+    const t_socio *socio = registro;
+
+    return socio->dni;
 }
 
 void rechazar_socio(const void *reg, const char *linea, const char *tipo_error, const t_fecha *fecha_proc)
