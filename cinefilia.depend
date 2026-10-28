@@ -76,7 +76,7 @@
 	<string.h>
 	"indice.h"
 
-1793143179 source:c:\users\admin\downloads\grupo12\tp-topicos\lectura.c
+1793194623 source:c:\users\admin\downloads\grupo12\tp-topicos\lectura.c
 	<string.h>
 	"lectura.h"
 	"util.h"
@@ -116,7 +116,7 @@
 	"novedad.h"
 	"cadena.h"
 
-1793143265 source:c:\users\admin\downloads\grupo12\tp-topicos\socio.c
+1793194747 source:c:\users\admin\downloads\grupo12\tp-topicos\socio.c
 	<stdlib.h>
 	<string.h>
 	<conio.h>

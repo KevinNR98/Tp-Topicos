@@ -175,12 +175,14 @@ int generar_binarios_ALU(t_indice *ind_socios, t_indice *ind_titulos, const t_fe
     t_socio socio;
     t_titulo titulo;
 
-    leer_archivo_texto_ALU(ARCH_SOCIOS_CSV, arch_socios, ind_socios, &socio, sizeof(t_socio), fecha_proceso, texto_a_socio_ALU, valida_socio_ALU, rechazar_socio, obtener_clave_socio, &aceptados, &rechazados);
+    leer_archivo_texto_ALU(ARCH_SOCIOS_CSV, arch_socios, ind_socios, &socio, sizeof(t_socio), fecha_proceso,
+                           texto_a_socio_ALU, valida_socio_ALU, rechazar_socio, obtener_clave_socio, &aceptados, &rechazados);
     printf("Socios: %u aceptados %u rechazados ", aceptados, rechazados);
     if(rechazados > 0)
         printf("(ver archivos/errores_socios.txt)");
     putchar('\n');
-    leer_archivo_texto_ALU(ARCH_TITULOS_CSV, arch_titulos, ind_titulos, &titulo, sizeof(t_titulo), fecha_proceso, texto_a_titulo_ALU, valida_titulo_ALU, rechazar_titulo, obtener_clave_titulo, &aceptados, &rechazados);
+    leer_archivo_texto_ALU(ARCH_TITULOS_CSV, arch_titulos, ind_titulos, &titulo, sizeof(t_titulo), fecha_proceso,
+                           texto_a_titulo_ALU, valida_titulo_ALU, rechazar_titulo, obtener_clave_titulo, &aceptados, &rechazados);
     printf("Titulos: %u aceptados %u rechazados\n\n", aceptados, rechazados);
 
     fclose(arch_socios);

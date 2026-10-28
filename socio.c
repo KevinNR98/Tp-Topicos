@@ -305,9 +305,9 @@ int socio_alta_manual_ALU(t_indice *indice, const char *path, const t_fecha *fec
 
     //DNI
     carga_manual("\nDNI: ", cadena, sizeof(cadena));
+    strcpy(dni, cadena);
     if(sscanf(cadena, "%ld%c", &socio.dni, &extra) != 1)
     {
-        strcpy(dni, cadena);
         socio.dni = 0;
     }
 
@@ -325,7 +325,8 @@ int socio_alta_manual_ALU(t_indice *indice, const char *path, const t_fecha *fec
 
     //FECHA NACIMIENTO
     carga_manual("\nFECHA NACIMIENTO: ", cadena, sizeof(cadena));
-    if(sscanf(cadena, "%d/%d/%d%c", &socio.fecha_nacimiento.dia, &socio.fecha_nacimiento.mes, &socio.fecha_nacimiento.anio, &extra) != 3)
+    if(sscanf(cadena, "%d/%d/%d%c",
+              &socio.fecha_nacimiento.dia, &socio.fecha_nacimiento.mes, &socio.fecha_nacimiento.anio, &extra) != 3)
     {
         socio.fecha_nacimiento.dia = 0;
         socio.fecha_nacimiento.mes = 0;
@@ -339,7 +340,8 @@ int socio_alta_manual_ALU(t_indice *indice, const char *path, const t_fecha *fec
 
     //FECHA AFILIACION
     carga_manual("\nFECHA AFILIACION: ", cadena, sizeof(cadena));
-    if(sscanf(cadena, "%d/%d/%d%c", &socio.fecha_afiliacion.dia, &socio.fecha_afiliacion.mes, &socio.fecha_afiliacion.anio, &extra) != 3)
+    if(sscanf(cadena, "%d/%d/%d%c",
+              &socio.fecha_afiliacion.dia, &socio.fecha_afiliacion.mes, &socio.fecha_afiliacion.anio, &extra) != 3)
     {
         socio.fecha_afiliacion.dia = 0;
         socio.fecha_afiliacion.mes = 0;
@@ -355,7 +357,8 @@ int socio_alta_manual_ALU(t_indice *indice, const char *path, const t_fecha *fec
 
     //FECHA ULTIMA CUOTA
     carga_manual("\nFECHA ULTIMA CUOTA PAGA: ", cadena, sizeof(cadena));
-    if(sscanf(cadena, "%d/%d/%d%c", &socio.fecha_ultima_cuota.dia, &socio.fecha_ultima_cuota.mes, &socio.fecha_ultima_cuota.anio, &extra) != 3)
+    if(sscanf(cadena, "%d/%d/%d%c",
+              &socio.fecha_ultima_cuota.dia, &socio.fecha_ultima_cuota.mes, &socio.fecha_ultima_cuota.anio, &extra) != 3)
     {
         socio.fecha_ultima_cuota.dia = 0;
         socio.fecha_ultima_cuota.mes = 0;
@@ -395,9 +398,53 @@ int socio_alta_manual_ALU(t_indice *indice, const char *path, const t_fecha *fec
 
     fclose(arch_bin);
 
-    puts("\n========== NUEVO SOCIO ==========");
-    socio_mostrar(&socio);
-    puts("=================================");
+    char nacimiento[TAM_FECHA_TXT];
+    char afiliacion[TAM_FECHA_TXT];
+    char ultima_cuota[TAM_FECHA_TXT];
+
+    sprintf(nacimiento, "%02d/%02d/%04d",
+            socio.fecha_nacimiento.dia,
+            socio.fecha_nacimiento.mes,
+            socio.fecha_nacimiento.anio);
+
+    sprintf(afiliacion, "%02d/%02d/%04d",
+            socio.fecha_afiliacion.dia,
+            socio.fecha_afiliacion.mes,
+            socio.fecha_afiliacion.anio);
+
+    sprintf(ultima_cuota, "%02d/%02d/%04d",
+            socio.fecha_ultima_cuota.dia,
+            socio.fecha_ultima_cuota.mes,
+            socio.fecha_ultima_cuota.anio);
+
+    puts("\n================================================================= "
+         "NUEVO SOCIO =================================================================");
+    printf("%-10s %-15s %-32s %-12s %-3s %-12s %-10s %-12s %-3s %-11s %s\n",
+       "DNI",
+       "CUIL",
+       "APELLIDOS Y NOMBRES",
+       "NACIMIENTO",
+       "S",
+       "AFILIACION",
+       "CATEG.",
+       "ULT.CUOTA",
+       "E",
+       "PLAN",
+       "EMAIL TUTOR");
+    printf("%-10ld %-15s %-32.32s %-12s %-3c %-12s %-10s %-12s %-3c %-11s %s\n\n",
+       socio.dni,
+       socio.cuil,
+       socio.apellidos_nombres,
+       nacimiento,
+       socio.sexo,
+       afiliacion,
+       socio.categoria,
+       ultima_cuota,
+       socio.estado,
+       socio.plan,
+       socio.email_tutor);
+    puts("=================================================================="
+         "=============================================================================");
 
     return OK;
 }
@@ -422,7 +469,8 @@ int socio_modificacion_manual_ALU(t_indice *indice, const char *path, const t_fe
     char extra;
 
     carga_manual("\nDNI del socio a modificar: ", cadena, sizeof(cadena));
-    if(sscanf(cadena, "%ld%c", &reg_buscado.id, &extra) != 1 || indice_buscar_ALU(indice, &reg_buscado, sizeof(t_reg_indice), compara_reg_indice_ALU) == NO_EXISTE)
+    if(sscanf(cadena, "%ld%c", &reg_buscado.id, &extra) != 1 ||
+       indice_buscar_ALU(indice, &reg_buscado, sizeof(t_reg_indice), compara_reg_indice_ALU) == NO_EXISTE)
     {
         puts("Modificacion rechazada. El DNI ingresado no existe o fue dado de baja.");
         return ERROR;
@@ -508,11 +556,13 @@ int socio_modificacion_manual_ALU(t_indice *indice, const char *path, const t_fe
     }
 
     //FECHA NACIMIENTO
-    sprintf(mensaje, "\nFECHA DE NACIMIENTO [%02d/%02d/%04d]: ", socio.fecha_nacimiento.dia, socio.fecha_nacimiento.mes, socio.fecha_nacimiento.anio);
+    sprintf(mensaje, "\nFECHA DE NACIMIENTO [%02d/%02d/%04d]: ",
+            socio.fecha_nacimiento.dia, socio.fecha_nacimiento.mes, socio.fecha_nacimiento.anio);
     carga_manual(mensaje, cadena, sizeof(cadena));
     if(*cadena != '\0')
     {
-        if(sscanf(cadena, "%d/%d/%d%c", &socio.fecha_nacimiento.dia, &socio.fecha_nacimiento.mes, &socio.fecha_nacimiento.anio, &extra) != 3)
+        if(sscanf(cadena, "%d/%d/%d%c",
+                  &socio.fecha_nacimiento.dia, &socio.fecha_nacimiento.mes, &socio.fecha_nacimiento.anio, &extra) != 3)
         {
             socio.fecha_nacimiento.dia = 0;
             socio.fecha_nacimiento.mes = 0;
@@ -530,11 +580,13 @@ int socio_modificacion_manual_ALU(t_indice *indice, const char *path, const t_fe
     }
 
     //FECHA AFILIACION
-    sprintf(mensaje, "\nFECHA DE AFILIACION [%02d/%02d/%04d]: ", socio.fecha_afiliacion.dia, socio.fecha_afiliacion.mes, socio.fecha_afiliacion.anio);
+    sprintf(mensaje, "\nFECHA DE AFILIACION [%02d/%02d/%04d]: ",
+            socio.fecha_afiliacion.dia, socio.fecha_afiliacion.mes, socio.fecha_afiliacion.anio);
     carga_manual(mensaje, cadena, sizeof(cadena));
     if(*cadena != '\0')
     {
-        if(sscanf(cadena, "%d/%d/%d%c", &socio.fecha_afiliacion.dia, &socio.fecha_afiliacion.mes, &socio.fecha_afiliacion.anio, &extra) != 3)
+        if(sscanf(cadena, "%d/%d/%d%c",
+                  &socio.fecha_afiliacion.dia, &socio.fecha_afiliacion.mes, &socio.fecha_afiliacion.anio, &extra) != 3)
         {
             socio.fecha_afiliacion.dia = 0;
             socio.fecha_afiliacion.mes = 0;
@@ -554,11 +606,13 @@ int socio_modificacion_manual_ALU(t_indice *indice, const char *path, const t_fe
     }
 
     //FECHA ULTIMA CUOTA
-    sprintf(mensaje, "\nFECHA DE AFILIACION [%02d/%02d/%04d]: ", socio.fecha_afiliacion.dia, socio.fecha_afiliacion.mes, socio.fecha_afiliacion.anio);
+    sprintf(mensaje, "\nFECHA ULTIMA CUOTA PAGA [%02d/%02d/%04d]: ",
+            socio.fecha_ultima_cuota.dia, socio.fecha_ultima_cuota.mes, socio.fecha_ultima_cuota.anio);
     carga_manual(mensaje, cadena, sizeof(cadena));
     if(*cadena != '\0')
     {
-        if(sscanf(cadena, "%d/%d/%d%c", &socio.fecha_ultima_cuota.dia, &socio.fecha_ultima_cuota.mes, &socio.fecha_ultima_cuota.anio, &extra) != 3)
+        if(sscanf(cadena, "%d/%d/%d%c",
+                  &socio.fecha_ultima_cuota.dia, &socio.fecha_ultima_cuota.mes, &socio.fecha_ultima_cuota.anio, &extra) != 3)
         {
             socio.fecha_ultima_cuota.dia = 0;
             socio.fecha_ultima_cuota.mes = 0;
