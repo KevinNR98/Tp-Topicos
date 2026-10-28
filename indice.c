@@ -19,14 +19,13 @@ Observaciones:  -
 int indice_crear_ALU(t_indice *indice, size_t nmemb, size_t tamanyo)
 {
     indice->vindice = malloc(nmemb * tamanyo);
-    if (indice->vindice == NULL)
-    {
-        indice->cantidad_elementos_actual = 0;
-        indice->cantidad_elementos_maxima = 0;
+
+    if(indice == NULL)
         return ERROR;
-    }
+
     indice->cantidad_elementos_actual = 0;
     indice->cantidad_elementos_maxima = nmemb;
+
     return OK;
 }
 
@@ -42,14 +41,22 @@ Observaciones:  Si el producto no aumenta la capacidad (arreglos muy chicos)
 ******************************************************************************/
 int indice_redimensionar_ALU(t_indice *indice, size_t tamanyo)
 {
-    size_t inc = (indice->cantidad_elementos_maxima * INCREMENTO);
-    void* temp = realloc(indice->vindice,tamanyo * inc);
-    if(temp == NULL){
-        printf("ERROR AL REDIMENSIONAR EL INDICE...");
+    unsigned nuevo;
+    void *aux;
+
+    nuevo = (unsigned)(tamanyo * INCREMENTO);
+
+    if(nuevo <= indice->cantidad_elementos_maxima)
+        nuevo = indice->cantidad_elementos_maxima + 1;
+
+    aux = realloc(indice->vindice, tamanyo * INCREMENTO);
+
+    if(aux == NULL)
         return ERROR;
-    }
-    indice->cantidad_elementos_maxima=inc;
-    indice->vindice=temp;
+
+    indice->vindice = aux;
+    indice->cantidad_elementos_maxima = nuevo;
+
     return OK;
 }
 
@@ -67,19 +74,34 @@ Observaciones:  -
 int indice_insertar_ALU(t_indice *indice, const void *registro, size_t tamanyo,
                     int (*cmp)(const void *, const void *))
 {
-    int pos=indice_buscar_ALU(indice,(void*)registro,tamanyo,cmp);
-    if(pos!=-1)
-        return ERROR; //ya existe, no se puede insertar
-    if(indice_lleno_ALU(indice)){
-        indice_redimensionar_ALU(indice, tamanyo);
+    void *p_indice = indice->vindice;
+    void *p_fin = p_indice + (indice->cantidad_elementos_actual * tamanyo);
+    size_t pos = 0;
+
+    while(p_indice < p_fin && cmp(registro, p_indice) > 0)
+    {
+        p_indice += tamanyo;
+        pos++;
     }
-    char* base=(char*)indice->vindice;
-    size_t i = indice->cantidad_elementos_actual;
-    while(i>0&&cmp(registro,base+(i-1)*tamanyo)<0){
-        memcpy(base+(i)*tamanyo,base+(i-1)*tamanyo,tamanyo);
-        i--;
+
+    if(p_indice < p_fin && cmp(registro, p_indice) == 0)
+        return ERROR;
+
+    if(indice_lleno_ALU(indice) == OK)
+    {
+        if(indice_redimensionar_ALU(indice, tamanyo) == ERROR)
+            return ERROR;
+
+        p_indice = indice->vindice + (pos * tamanyo);
+        p_fin = indice->vindice + (indice->cantidad_elementos_actual * tamanyo);
     }
-    memcpy(base+i*tamanyo,registro,tamanyo);
+
+    for(;p_indice < p_fin; p_fin -= tamanyo)
+    {
+        memcpy(p_fin, p_fin - tamanyo, tamanyo);
+    }
+
+    memcpy(p_indice, registro, tamanyo);
     indice->cantidad_elementos_actual++;
     return OK;
 }
@@ -97,11 +119,21 @@ Observaciones:  -
 int indice_eliminar_ALU(t_indice *indice, const void *registro, size_t tamanyo,
                     int (*cmp)(const void *, const void *))
 {
-    int pos=indice_buscar_ALU(indice,(void*)registro,tamanyo,cmp);
-    if(pos==-1)
+    void *p_eliminar = indice->vindice;
+    void *p_fin = indice->vindice + (indice->cantidad_elementos_actual * tamanyo);
+
+    while(p_eliminar < p_fin && cmp(registro, p_eliminar) > 0)
+        p_eliminar += tamanyo;
+
+    if(p_eliminar == p_fin)
         return ERROR;
-    char* base=(char*)indice->vindice;
-    memmove(base+pos*tamanyo,base+(pos+1)*tamanyo,(indice->cantidad_elementos_actual-pos-1)*tamanyo);
+
+    if(p_eliminar < p_fin && cmp(registro, p_eliminar) < 0)
+        return ERROR;
+
+    for(; p_eliminar < (p_fin - tamanyo); p_eliminar += tamanyo)
+        memcpy(p_eliminar, p_eliminar + tamanyo, tamanyo);
+
     indice->cantidad_elementos_actual--;
     return OK;
 }
@@ -121,29 +153,21 @@ Observaciones:  La comparacion entre claves se realiza exclusivamente mediante
 int indice_buscar_ALU(const t_indice *indice, void *registro, size_t tamanyo,
                   int (*cmp)(const void *, const void *))
 {
-    if(indice->cantidad_elementos_actual == 0)
+    void *p_buscado = indice->vindice;
+    void *p_fin = indice->vindice + (indice->cantidad_elementos_actual * tamanyo);
+    size_t pos = 0;
+
+    while(p_buscado < p_fin && cmp(registro, p_buscado) > 0)
+    {
+        pos++;
+        p_buscado += tamanyo;
+    }
+
+    if(p_buscado == p_fin || cmp(registro, p_buscado) < 0)
         return NO_EXISTE;
 
-    size_t low = 0, high = indice->cantidad_elementos_actual - 1, mid;
-    int comp_result;
-
-    while(low <= high){
-        mid = (low + high) / 2;
-        void *actual = (char *)indice->vindice + mid * tamanyo;
-        comp_result = cmp(registro, actual);
-
-        if(comp_result == 0){
-            memcpy(registro, actual, tamanyo);
-            return (int)mid;
-        }
-        else if(comp_result < 0){
-            if(mid == 0) break;
-            high = mid - 1;
-        }else{
-            low = mid + 1;
-        }
-    }
-    return NO_EXISTE;
+    memcpy(registro, p_buscado, tamanyo);
+    return pos;
 }
 
 /******************************************************************************
@@ -154,9 +178,7 @@ Observaciones:  -
 ******************************************************************************/
 int indice_vacio_ALU(const t_indice *indice)
 {
-    if(indice->cantidad_elementos_actual==0)
-        return OK;
-    return ERROR;
+    return indice->cantidad_elementos_actual == 0;
 }
 
 /******************************************************************************
@@ -167,9 +189,7 @@ Observaciones:  -
 ******************************************************************************/
 int indice_lleno_ALU(const t_indice *indice)
 {
-    if(indice->cantidad_elementos_actual==indice->cantidad_elementos_maxima)
-        return OK;
-    return ERROR;
+    return indice->cantidad_elementos_actual == indice->cantidad_elementos_maxima;
 }
 
 /******************************************************************************
@@ -180,11 +200,7 @@ Observaciones:  -
 ******************************************************************************/
 void indice_vaciar_ALU(t_indice *indice)
 {
-    if(indice->vindice!=NULL)
-        indice->vindice=NULL;
-
-    indice->cantidad_elementos_actual=0;
-    indice->cantidad_elementos_maxima=0;
+    indice->cantidad_elementos_actual = 0;
 }
 
 /******************************************************************************
@@ -196,11 +212,7 @@ Observaciones:  Luego de invocarla el indice no puede usarse sin volver a
 ******************************************************************************/
 void indice_destruir_ALU(t_indice *indice)
 {
-    if (indice == NULL)
-        return;
-
     free(indice->vindice);
-
     indice->vindice = NULL;
     indice->cantidad_elementos_actual = 0;
     indice->cantidad_elementos_maxima = 0;
@@ -228,40 +240,34 @@ int indice_cargar_ALU(const char *path, t_indice *indice, size_t tamanyo_reg,
                   int (*es_activo)(const void *),
                   int (*cmp)(const void *, const void *))
 {
-    FILE* archbin = fopen(path, "rb");
-    if(!archbin)
+    FILE *f_bin = fopen(path, "rb");
+
+    if(!f_bin)
         return ERROR;
-
-
-    indice_vaciar_ALU(indice);
 
     void *registro = malloc(tamanyo_reg);
-    if(!registro) {
-        fclose(archbin);
+
+    if(!registro)
         return ERROR;
-    }
 
+    t_reg_indice reg_indice;
     unsigned nro_reg = 0;
-    size_t leidos = fread(registro, tamanyo_reg, 1, archbin);
 
-    while(leidos == 1){
-        if(es_activo(registro)){
-            t_reg_indice reg_ind;
-            reg_ind.nro_reg = nro_reg;                // Posición en el archivo
-            reg_ind.id = obtener_clave(registro);    // Clave obtenida mediante la función
+    fread(registro, tamanyo_reg, 1, f_bin);
 
-            if(indice_insertar_ALU(indice, &reg_ind, sizeof(t_reg_indice), cmp) == ERROR) {
-                free(registro);
-                fclose(archbin);
-                return ERROR;
-            }
+    while(!feof(f_bin))
+    {
+        if(es_activo(registro))
+        {
+            reg_indice.id = obtener_clave(registro);
+            reg_indice.nro_reg = nro_reg;
+            indice_insertar_ALU(indice, &reg_indice, sizeof(t_reg_indice), cmp);
         }
-
         nro_reg++;
-        leidos = fread(registro, tamanyo_reg, 1, archbin);
+        fread(registro, tamanyo_reg, 1, f_bin);
     }
 
     free(registro);
-    fclose(archbin);
+    fclose(f_bin);
     return OK;
 }
