@@ -26,3 +26,14 @@ void salir_y_persistir_ALU(t_indice *ind_socios, t_indice *ind_titulos,
        funcion de la biblioteca que tenga version _ALU. */
     salir_y_persistir(ind_socios, ind_titulos, matriz_consumo, fecha_proceso);
 }
+
+
+void carga_manual(const char *mensaje, char *cadena, const size_t tam_cad)
+{
+    char *salto;
+    printf("%s", mensaje);
+    fgets(cadena, tam_cad, stdin);
+    salto = strchr(cadena, '\n');
+    if(salto)
+        *salto = '\0';
+}

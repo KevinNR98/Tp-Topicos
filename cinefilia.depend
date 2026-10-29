@@ -1,0 +1,295 @@
+# depslib dependency file v1.0
+1793142908 source:c:\users\admin\downloads\grupo12\tp-topicos\alquiler.c
+	<stdlib.h>
+	<string.h>
+	"alquiler.h"
+	"cadena.h"
+	"util.h"
+
+1793142956 c:\users\admin\downloads\grupo12\tp-topicos\alquiler.h
+	"socio.h"
+	"titulo.h"
+
+1793143280 c:\users\admin\downloads\grupo12\tp-topicos\socio.h
+	<stdio.h>
+	"fecha.h"
+	"indice.h"
+	"lectura.h"
+	"validaciones.h"
+
+1791942220 c:\users\admin\downloads\grupo12\tp-topicos\fecha.h
+
+1791942220 c:\users\admin\downloads\grupo12\tp-topicos\indice.h
+	<stddef.h>
+
+1793143215 c:\users\admin\downloads\grupo12\tp-topicos\lectura.h
+	<stdio.h>
+	"indice.h"
+	"fecha.h"
+
+1793143386 c:\users\admin\downloads\grupo12\tp-topicos\validaciones.h
+
+1793143303 c:\users\admin\downloads\grupo12\tp-topicos\titulo.h
+	<stdio.h>
+	"indice.h"
+	"lectura.h"
+
+1793143069 c:\users\admin\downloads\grupo12\tp-topicos\cadena.h
+
+1793143357 c:\users\admin\downloads\grupo12\tp-topicos\util.h
+	<stdio.h>
+	<stdlib.h>
+	"alquiler.h"
+
+1793142977 source:c:\users\admin\downloads\grupo12\tp-topicos\auditoria.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"auditoria.h"
+	"lectura.h"
+	"cadena.h"
+	"util.h"
+	"indice.h"
+
+1793143421 c:\users\admin\downloads\grupo12\tp-topicos\auditoria.h
+	"fecha.h"
+	"socio.h"
+
+1793143062 source:c:\users\admin\downloads\grupo12\tp-topicos\cadena.c
+	<string.h>
+	<ctype.h>
+	<stddef.h>
+	"cadena.h"
+
+1793143089 source:c:\users\admin\downloads\grupo12\tp-topicos\fecha.c
+	<stdio.h>
+	<string.h>
+	<ctype.h>
+	<time.h>
+	"fecha.h"
+	"util.h"
+	"indice.h"
+
+1793211438 source:c:\users\admin\downloads\grupo12\tp-topicos\indice.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"indice.h"
+
+1793194623 source:c:\users\admin\downloads\grupo12\tp-topicos\lectura.c
+	<string.h>
+	"lectura.h"
+	"util.h"
+	"cadena.h"
+	"socio.h"
+	"titulo.h"
+	"config.h"
+
+1791942220 c:\users\admin\downloads\grupo12\tp-topicos\config.h
+
+1791942220 source:c:\users\admin\downloads\grupo12\tp-topicos\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"config.h"
+	"util.h"
+	"menu.h"
+	"fecha.h"
+	"indice.h"
+	"lectura.h"
+	"socio.h"
+	"titulo.h"
+	"novedad.h"
+	"alquiler.h"
+	"auditoria.h"
+	"generador.h"
+
+1791942220 c:\users\admin\downloads\grupo12\tp-topicos\menu.h
+
+1793143241 c:\users\admin\downloads\grupo12\tp-topicos\novedad.h
+	"titulo.h"
+
+1791942220 c:\users\admin\downloads\grupo12\tp-topicos\generador.h
+
+1793143230 source:c:\users\admin\downloads\grupo12\tp-topicos\novedad.c
+	<string.h>
+	"novedad.h"
+	"cadena.h"
+
+1793194747 source:c:\users\admin\downloads\grupo12\tp-topicos\socio.c
+	<stdlib.h>
+	<string.h>
+	<conio.h>
+	"socio.h"
+	"cadena.h"
+	"util.h"
+	"auditoria.h"
+	"config.h"
+	"menu.h"
+
+1793143294 source:c:\users\admin\downloads\grupo12\tp-topicos\titulo.c
+	<stdlib.h>
+	<string.h>
+	"titulo.h"
+	"cadena.h"
+	"util.h"
+
+1793143316 source:c:\users\admin\downloads\grupo12\tp-topicos\util.c
+	<string.h>
+	"util.h"
+	"cadena.h"
+	"config.h"
+
+1793143373 source:c:\users\admin\downloads\grupo12\tp-topicos\validaciones.c
+	<ctype.h>
+	<stdio.h>
+	<string.h>
+	"validaciones.h"
+
+1793252491 source:c:\users\kevin\downloads\tp-topicos-vfinal\tp-topicos-vfinal\alquiler.c
+	<stdlib.h>
+	<string.h>
+	"alquiler.h"
+	"cadena.h"
+	"util.h"
+
+1793211541 c:\users\kevin\downloads\tp-topicos-vfinal\tp-topicos-vfinal\alquiler.h
+	"socio.h"
+	"titulo.h"
+
+1793211541 c:\users\kevin\downloads\tp-topicos-vfinal\tp-topicos-vfinal\socio.h
+	<stdio.h>
+	"fecha.h"
+	"indice.h"
+	"lectura.h"
+	"validaciones.h"
+
+1793211541 c:\users\kevin\downloads\tp-topicos-vfinal\tp-topicos-vfinal\fecha.h
+
+1793211541 c:\users\kevin\downloads\tp-topicos-vfinal\tp-topicos-vfinal\indice.h
+	<stddef.h>
+
+1793211541 c:\users\kevin\downloads\tp-topicos-vfinal\tp-topicos-vfinal\lectura.h
+	<stdio.h>
+	"indice.h"
+	"fecha.h"
+
+1793211541 c:\users\kevin\downloads\tp-topicos-vfinal\tp-topicos-vfinal\validaciones.h
+
+1793211541 c:\users\kevin\downloads\tp-topicos-vfinal\tp-topicos-vfinal\titulo.h
+	<stdio.h>
+	"indice.h"
+	"lectura.h"
+
+1793211541 c:\users\kevin\downloads\tp-topicos-vfinal\tp-topicos-vfinal\cadena.h
+
+1793211541 c:\users\kevin\downloads\tp-topicos-vfinal\tp-topicos-vfinal\util.h
+	<stdio.h>
+	<stdlib.h>
+	"alquiler.h"
+
+1793250236 source:c:\users\kevin\downloads\tp-topicos-vfinal\tp-topicos-vfinal\auditoria.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"auditoria.h"
+	"lectura.h"
+	"cadena.h"
+	"util.h"
+	"indice.h"
+
+1793211541 c:\users\kevin\downloads\tp-topicos-vfinal\tp-topicos-vfinal\auditoria.h
+	"fecha.h"
+	"socio.h"
+
+1793211541 source:c:\users\kevin\downloads\tp-topicos-vfinal\tp-topicos-vfinal\cadena.c
+	<string.h>
+	<ctype.h>
+	<stddef.h>
+	"cadena.h"
+
+1793211541 source:c:\users\kevin\downloads\tp-topicos-vfinal\tp-topicos-vfinal\fecha.c
+	<stdio.h>
+	<string.h>
+	<ctype.h>
+	<time.h>
+	"fecha.h"
+	"util.h"
+	"indice.h"
+
+1793249519 source:c:\users\kevin\downloads\tp-topicos-vfinal\tp-topicos-vfinal\indice.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"indice.h"
+
+1793248777 source:c:\users\kevin\downloads\tp-topicos-vfinal\tp-topicos-vfinal\lectura.c
+	<string.h>
+	"lectura.h"
+	"util.h"
+	"cadena.h"
+	"socio.h"
+	"titulo.h"
+	"config.h"
+
+1793211541 c:\users\kevin\downloads\tp-topicos-vfinal\tp-topicos-vfinal\config.h
+
+1793211541 source:c:\users\kevin\downloads\tp-topicos-vfinal\tp-topicos-vfinal\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"config.h"
+	"util.h"
+	"menu.h"
+	"fecha.h"
+	"indice.h"
+	"lectura.h"
+	"socio.h"
+	"titulo.h"
+	"novedad.h"
+	"alquiler.h"
+	"auditoria.h"
+	"generador.h"
+
+1793211541 c:\users\kevin\downloads\tp-topicos-vfinal\tp-topicos-vfinal\menu.h
+
+1793211541 c:\users\kevin\downloads\tp-topicos-vfinal\tp-topicos-vfinal\novedad.h
+	"titulo.h"
+
+1793211541 c:\users\kevin\downloads\tp-topicos-vfinal\tp-topicos-vfinal\generador.h
+
+1793249721 source:c:\users\kevin\downloads\tp-topicos-vfinal\tp-topicos-vfinal\novedad.c
+	<string.h>
+	"novedad.h"
+	"cadena.h"
+
+1793252797 source:c:\users\kevin\downloads\tp-topicos-vfinal\tp-topicos-vfinal\socio.c
+	<stdlib.h>
+	<string.h>
+	<conio.h>
+	"socio.h"
+	"cadena.h"
+	"util.h"
+	"auditoria.h"
+	"config.h"
+	"menu.h"
+
+1793251693 source:c:\users\kevin\downloads\tp-topicos-vfinal\tp-topicos-vfinal\titulo.c
+	<stdlib.h>
+	<string.h>
+	"titulo.h"
+	"cadena.h"
+	"util.h"
+
+1793211541 source:c:\users\kevin\downloads\tp-topicos-vfinal\tp-topicos-vfinal\util.c
+	<string.h>
+	"util.h"
+	"cadena.h"
+	"config.h"
+
+1793211541 source:c:\users\kevin\downloads\tp-topicos-vfinal\tp-topicos-vfinal\validaciones.c
+	<ctype.h>
+	<stdio.h>
+	<string.h>
+	"validaciones.h"
+

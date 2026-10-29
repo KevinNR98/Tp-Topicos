@@ -41,10 +41,69 @@ int leer_archivo_texto_ALU(const char *path_txt, FILE *arch_bin, t_indice *indic
                        long (*obtener_clave)(const void *),
                        unsigned *aceptados, unsigned *rechazados)
 {
-    /* TODO: reemplazar esta llamada a la funcion de la catedra por su propia
-       implementacion. En la entrega no puede quedar ninguna llamada a una
-       funcion de la biblioteca que tenga version _ALU. */
-    return leer_archivo_texto(path_txt, arch_bin, indice, reg, tamanyo, fecha_proceso, parsear, validar, rechazar, obtener_clave, aceptados, rechazados);
+    FILE *pf = fopen(path_txt, "rt");
+    if (!pf)
+        return ERROR;
+
+    *aceptados = 0;
+    *rechazados = 0;
+
+    char linea[TAM_LINEA + 1];
+    char error_msg[TAM_TIPO_ERROR];
+
+    // Armar el contexto que se compartirá en cada validación
+    t_contexto ctx;
+    ctx.indice = indice;
+    ctx.arch_bin = arch_bin;
+    ctx.fecha_proceso = fecha_proceso;
+    ctx.id_modificando = 0; // 0 porque son altas masivas desde el archivo de texto
+
+    // Recorrer el archivo de texto línea por línea
+    while (fgets(linea, sizeof(linea), pf))
+    {
+
+        // Parsear la línea al buffer de registro
+        if (parsear(linea, reg) != OK) //
+        {
+            rechazar(reg, linea, "FORMATO", fecha_proceso);
+            (*rechazados)++;
+            continue;
+        }
+
+        // Validar el registro pasándole el contexto
+        if (validar(reg, &ctx, error_msg) != OK)
+        {
+            rechazar(reg, linea, error_msg, fecha_proceso);
+            (*rechazados)++;
+            continue;
+        }
+
+        fseek(arch_bin, 0L, SEEK_END);
+
+        long pos = ftell(arch_bin);
+        unsigned nro_reg = pos / tamanyo;
+
+        fwrite(reg, tamanyo, 1, arch_bin);
+        fflush(arch_bin);
+
+        // Insertar en el índice en memoria
+        t_reg_indice reg_ind;
+        reg_ind.nro_reg = nro_reg;
+        reg_ind.id = obtener_clave(reg);
+
+        if (indice_insertar_ALU(indice, &reg_ind, sizeof(t_reg_indice),
+                                 compara_reg_indice_ALU) != OK)
+        {
+            rechazar(reg, linea, "DNI", fecha_proceso);
+            (*rechazados)++;
+            continue;
+        }
+
+        (*aceptados)++;
+    }
+
+    fclose(pf);
+    return OK;
 }
 
 /******************************************************************************
@@ -55,10 +114,15 @@ Observaciones:  Se usa como cmp en todas las operaciones del TDA indice.
 ******************************************************************************/
 int compara_reg_indice_ALU(const void *a, const void *b)
 {
-    /* TODO: reemplazar esta llamada a la funcion de la catedra por su propia
-       implementacion. En la entrega no puede quedar ninguna llamada a una
-       funcion de la biblioteca que tenga version _ALU. */
-    return compara_reg_indice(a, b);
+    const t_reg_indice *reg_a = (const t_reg_indice *)a;
+    const t_reg_indice *reg_b = (const t_reg_indice *)b;
+
+    if (reg_a->id < reg_b->id)
+        return -1;
+    if (reg_a->id > reg_b->id)
+        return 1;
+
+    return 0;
 }
 
 /******************************************************************************
@@ -72,10 +136,13 @@ Observaciones:  -
 ******************************************************************************/
 int cargar_indices_ALU(t_indice *ind_socios, t_indice *ind_titulos)
 {
-    /* TODO: reemplazar esta llamada a la funcion de la catedra por su propia
-       implementacion. En la entrega no puede quedar ninguna llamada a una
-       funcion de la biblioteca que tenga version _ALU. */
-    return cargar_indices(ind_socios, ind_titulos);
+    indice_cargar_ALU(ARCH_SOCIOS_BIN, ind_socios, sizeof(t_socio), obtener_clave_socio, es_socio_activo, compara_reg_indice_ALU);
+    indice_cargar_ALU(ARCH_TITULOS_BIN, ind_titulos, sizeof(t_titulo), obtener_clave_titulo, es_titulo_activo, compara_reg_indice_ALU);
+
+    if(indice_vacio_ALU(ind_socios) || indice_vacio_ALU(ind_titulos))
+        return ERROR;
+
+    return OK;
 }
 
 /******************************************************************************
@@ -92,8 +159,47 @@ Observaciones:  Los rechazos de socios se auditan en errores_socios.txt; los
 ******************************************************************************/
 int generar_binarios_ALU(t_indice *ind_socios, t_indice *ind_titulos, const t_fecha *fecha_proceso)
 {
-    /* TODO: reemplazar esta llamada a la funcion de la catedra por su propia
-       implementacion. En la entrega no puede quedar ninguna llamada a una
-       funcion de la biblioteca que tenga version _ALU. */
-    return generar_binarios(ind_socios, ind_titulos, fecha_proceso);
+    FILE *arch_socios = fopen(ARCH_SOCIOS_BIN, "wb+");
+    FILE *arch_titulos = fopen(ARCH_TITULOS_BIN, "wb+");
+
+    if(!arch_socios || !arch_titulos)
+    {
+        if(arch_socios) fclose(arch_socios);
+        if(arch_titulos) fclose(arch_titulos);
+
+        puts("Error en la apertura de los archivos.");
+        return ERROR;
+    }
+
+    indice_vaciar_ALU(ind_socios);
+    indice_vaciar_ALU(ind_titulos);
+
+    unsigned aceptados=0, rechazados=0;
+    t_socio socio;
+    t_titulo titulo;
+
+    leer_archivo_texto_ALU(ARCH_SOCIOS_CSV, arch_socios, ind_socios, &socio, sizeof(t_socio), fecha_proceso,
+                           texto_a_socio_ALU, valida_socio_ALU, rechazar_socio, obtener_clave_socio, &aceptados, &rechazados);
+    printf("Socios: %u aceptados %u rechazados ", aceptados, rechazados);
+    if(rechazados > 0)
+        printf("(ver archivos/errores_socios.txt)");
+    putchar('\n');
+    leer_archivo_texto_ALU(ARCH_TITULOS_CSV, arch_titulos, ind_titulos, &titulo, sizeof(t_titulo), fecha_proceso,
+                           texto_a_titulo_ALU, valida_titulo_ALU, rechazar_titulo, obtener_clave_titulo, &aceptados, &rechazados);
+    printf("Titulos: %u aceptados %u rechazados\n\n", aceptados, rechazados);
+
+    fclose(arch_socios);
+    fclose(arch_titulos);
+
+    indice_destruir_ALU(ind_socios);
+    indice_destruir_ALU(ind_titulos);
+
+    if(indice_crear_ALU(ind_socios, CANTIDAD_ELEMENTOS, sizeof(t_reg_indice)) != OK ||
+       indice_crear_ALU(ind_titulos, CANTIDAD_ELEMENTOS, sizeof(t_reg_indice)) != OK)
+        return ERROR;
+
+    if(cargar_indices_ALU(ind_socios, ind_titulos) != OK)
+        return ERROR;
+
+    return OK;
 }

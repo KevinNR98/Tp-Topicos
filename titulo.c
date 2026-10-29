@@ -4,6 +4,10 @@
 #include "cadena.h"
 #include "util.h"
 
+static int parsear_id(const char *cad);
+static int parsear_stock(const char *cad);
+static int id_duplicado(const t_contexto *ctx, int id);
+
 /*============================================================================*/
 /*            FUNCIONES A IMPLEMENTAR POR EL ALUMNO (version _ALU)             */
 /*============================================================================*/
@@ -20,10 +24,37 @@ Observaciones:  Se pasa por puntero como parsear a leer_archivo_texto.
 ******************************************************************************/
 int texto_a_titulo_ALU(const char *linea, void *reg)
 {
-    /* TODO: reemplazar esta llamada a la funcion de la catedra por su propia
-       implementacion. En la entrega no puede quedar ninguna llamada a una
-       funcion de la biblioteca que tenga version _ALU. */
-    return texto_a_titulo(linea, reg);
+    if(!linea || !reg)
+        return ERROR;
+
+
+    t_titulo *titulo = (t_titulo*)reg;
+    char buff[TAM_LINEA];
+    char *campos[CAMPOS_TITULO + 1];
+
+    copiar_cadena(buff, linea, sizeof(buff));
+    quitar_salto(buff);
+
+    int cant = separar_campos_ALU(buff, campos, CAMPOS_TITULO + 1);
+    if(cant != CAMPOS_TITULO)
+        return ERROR;
+
+    //1.id pelicula
+    titulo->id = parsear_id(campos[0]);
+
+    //2.titulo
+    copiar_cadena(titulo->titulo,campos[1], sizeof(titulo->titulo));
+
+    //3.genero
+    copiar_cadena(titulo->genero, campos[2], sizeof(titulo->genero));
+
+    //4.stock
+    titulo->stock = parsear_stock(campos[3]);
+
+    //estado inicial
+    titulo->estado = 'A';
+
+    return OK;
 }
 
 /******************************************************************************
@@ -40,10 +71,42 @@ Observaciones:  Se pasa por puntero como validar a leer_archivo_texto. Se reutil
 ******************************************************************************/
 int valida_titulo_ALU(void *reg, const t_contexto *ctx, char *tipo_error)
 {
-    /* TODO: reemplazar esta llamada a la funcion de la catedra por su propia
-       implementacion. En la entrega no puede quedar ninguna llamada a una
-       funcion de la biblioteca que tenga version _ALU. */
-    return valida_titulo(reg, ctx, tipo_error);
+    if(!reg || !ctx || !tipo_error)
+        return ERROR;
+
+    t_titulo *titulo = (t_titulo*)reg;
+
+    //1.id
+    if(titulo->id <= 0 || id_duplicado(ctx, titulo->id))
+    {
+        copiar_cadena(tipo_error, TIPO_ERR_ID, TAM_TIPO_ERROR);
+        return ERROR;
+    }
+
+    //2.titulo
+    arreglar_titulo(titulo->titulo);
+    if(*titulo->titulo == '\0')
+    {
+        copiar_cadena(tipo_error, TIPO_ERR_TITULO, TAM_TIPO_ERROR);
+        return ERROR;
+    }
+
+    //3.genero
+    if(genero_indice(titulo->genero) < 0)
+    {
+        copiar_cadena(tipo_error, TIPO_ERR_GENERO, TAM_TIPO_ERROR);
+        return ERROR;
+    }
+
+    //4.stock
+    if(titulo->stock < 0)
+    {
+        copiar_cadena(tipo_error, TIPO_ERR_STOCK, TAM_TIPO_ERROR);
+        return ERROR;
+    }
+
+    *tipo_error = '\0';
+    return OK;
 }
 
 /******************************************************************************
@@ -60,4 +123,69 @@ int titulos_listar_ALU(const t_indice *indice, const char *path)
        implementacion. En la entrega no puede quedar ninguna llamada a una
        funcion de la biblioteca que tenga version _ALU. */
     return titulos_listar(indice, path);
+}
+
+
+long obtener_clave_titulo(const void *reg)
+{
+    const t_titulo *titulo = (const t_titulo *)reg;
+    return (long)titulo->id;
+}
+
+int es_titulo_activo(const void *registro)
+{
+    const t_titulo *titulo = (const t_titulo *)registro;
+
+    return titulo->estado == 'A';
+}
+
+void rechazar_titulo(const void *reg, const char *linea, const char *tipo_error, const t_fecha *fecha_proc)
+{
+    // Ignoramos los titulos rechazados
+    (void)reg;
+    (void)tipo_error;
+    (void)linea;
+    (void)fecha_proc;
+}
+
+static int parsear_id(const char *cad)
+{
+    if (!cad || !es_numero(cad) || *cad == '-')
+        return 0;
+
+    int len = strlen(cad);
+    if (len < 1 || len > 9)
+        return 0;
+
+    long val = atol(cad);
+
+    return (int)val;
+}
+
+static int parsear_stock(const char *cad)
+{
+    if (!cad || *cad == '-' || !es_numero(cad))
+        return -1;
+
+    int tam = strlen(cad);
+    if (tam < 1 || tam > 9)
+        return -1;
+
+    long val = atol(cad);
+
+    return (int)val;
+}
+
+static int id_duplicado(const t_contexto *ctx, int id)
+{
+    if(ctx->id_modificando == id)
+        return 0;
+
+    t_reg_indice reg_ind;
+    reg_ind.id = id;
+
+    return indice_buscar_ALU(ctx->indice,
+                             &reg_ind,
+                             sizeof(t_reg_indice),
+                             compara_reg_indice_ALU) != NO_EXISTE;
 }
