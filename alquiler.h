@@ -20,8 +20,4 @@ void tablero_mostrar_ALU(t_matriz_consumo m);
 int alquilar_ALU(t_indice *ind_socios, t_indice *ind_titulos, const char *path_socios,
              const char *path_titulos, t_matriz_consumo matriz_consumo, const t_fecha *fecha_proceso);
 
-void sumar_alquiler_matriz(int matriz[][CANT_GENEROS], const char *plan, const char *genero);
-void sumar_plan(int matriz[][CANT_GENEROS], const int nro_fila, const char *genero);
-
-
 #endif /* ALQUILER_H_INCLUDED */

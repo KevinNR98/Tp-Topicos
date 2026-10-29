@@ -102,4 +102,6 @@ long obtener_clave_socio(const void *reg);
 int es_socio_activo(const void *registro);
 void rechazar_socio(const void *reg, const char *linea, const char *tipo_error, const t_fecha *fecha_proc);
 
+void socio_mostrar_alu(const t_socio *socio);
+
 #endif /* SOCIO_H_INCLUDED */

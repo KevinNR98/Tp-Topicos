@@ -449,7 +449,7 @@ int socio_alta_manual_ALU(t_indice *indice, const char *path, const t_fecha *fec
            "E",
            "PLAN",
            "EMAIL TUTOR");
-    printf("%-10ld %-15s %-32.32s %-12s %-3c %-12s %-10s %-12s %-3c %-11s %s\n\n",
+    printf("%-10ld %-15s %-32.32s %-12s %-3c %-12s %-10s %-12s %-3c %-11s %s\n",
            socio.dni,
            socio.cuil,
            socio.apellidos_nombres,
@@ -745,10 +745,31 @@ Observaciones:  -
 ******************************************************************************/
 int socios_listar_ALU(const t_indice *indice, const char *path)
 {
-    /* TODO: reemplazar esta llamada a la funcion de la catedra por su propia
-       implementacion. En la entrega no puede quedar ninguna llamada a una
-       funcion de la biblioteca que tenga version _ALU. */
-    return socios_listar(indice, path);
+    int total_act=0;
+    t_reg_indice *reg = indice->vindice;
+    t_socio socio;
+    unsigned i;
+
+    FILE *arch = fopen(path, "rb");
+    if(!arch)
+        return ERROR;
+
+    printf("%-8s %-13s %-31s \t%-10s %c %-10s %-6s %-10s %c %-10s %-31s\n", "DNI","CUIL","APELLIDOS Y NOMBRES","NACIMIENTO",
+                                                                            'S', "AFILIACION","CATEG.","ULT.CUOTA",'E', "PLAN","EMAIL TUTOR");
+
+    for(i = 0; i < indice->cantidad_elementos_actual; i++)
+    {
+        if(socio_leer_ALU(arch, reg->nro_reg, &socio) == OK)
+        {
+            socio_mostrar_alu(&socio);
+            total_act++;
+        }
+        reg++;
+    }
+    fclose(arch);
+
+    printf("\nTotal de socios activos: %d\n", total_act);
+    return OK;
 }
 
 /******************************************************************************
@@ -910,4 +931,19 @@ static int dni_duplicado(const t_contexto *ctx, long dni)
     reg_ind.id = dni;
 
     return (indice_buscar_ALU(ctx->indice, &reg_ind, sizeof(t_reg_indice),compara_reg_indice_ALU) != NO_EXISTE);
+}
+
+void socio_mostrar_alu(const t_socio *socio)
+{
+    char nacimiento[11], afiliacion[11], ultima_cuota[11];
+
+    sprintf(nacimiento,"%02d/%02d/%04d", socio->fecha_nacimiento.dia, socio->fecha_nacimiento.mes, socio->fecha_nacimiento.anio);
+
+    sprintf(afiliacion,"%02d/%02d/%04d", socio->fecha_afiliacion.dia, socio->fecha_afiliacion.mes, socio->fecha_afiliacion.anio);
+
+    sprintf(ultima_cuota,"%02d/%02d/%04d", socio->fecha_ultima_cuota.dia, socio->fecha_ultima_cuota.mes, socio->fecha_ultima_cuota.anio);
+
+    printf("%-8ld %-13s %-61s \t%-10s %c %-10s %-6s %-10s %c %-10s %-31s\n", socio->dni, socio->cuil, socio->apellidos_nombres, nacimiento,
+                                                                                socio->sexo, afiliacion, socio->categoria, ultima_cuota, socio->estado,
+                                                                                            socio->plan, socio->email_tutor);
 }

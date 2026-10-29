@@ -56,5 +56,7 @@ long obtener_clave_titulo(const void *reg);
 int es_titulo_activo(const void *registro);
 void rechazar_titulo(const void *reg, const char *linea, const char *tipo_error, const t_fecha *fecha_proc);
 
+int titulo_leer_ALU(FILE *arch, unsigned nro_reg, t_titulo *t);
+
 #endif /* TITULO_H_INCLUDED */
 

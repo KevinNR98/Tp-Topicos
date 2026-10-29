@@ -119,10 +119,27 @@ Observaciones:  -
 ******************************************************************************/
 int titulos_listar_ALU(const t_indice *indice, const char *path)
 {
-    /* TODO: reemplazar esta llamada a la funcion de la catedra por su propia
-       implementacion. En la entrega no puede quedar ninguna llamada a una
-       funcion de la biblioteca que tenga version _ALU. */
-    return titulos_listar(indice, path);
+    int total_pelis=0;
+    t_titulo titulo;
+    unsigned i;
+    t_reg_indice *reg = indice->vindice;
+    FILE *arch = fopen(path, "rb");
+    if(!arch)
+        return ERROR;
+
+    printf("%-6s %-61s %-21s %s %c\n", "ID", "TITULO", "GENERO", "STOCK", 'E');
+    for(i = 0; i < indice->cantidad_elementos_actual; i++)
+    {
+        if(titulo_leer_ALU(arch, reg->nro_reg, &titulo)== OK)
+        {
+            printf("%-6d %-61s %-21s %5d %c\n", titulo.id, titulo.titulo, titulo.genero, titulo.stock, titulo.estado);
+            total_pelis++;
+        }
+        reg++;
+    }
+    fclose(arch);
+    printf("\nTotal de titulos activos: %d\n", total_pelis);
+    return OK;
 }
 
 
@@ -188,4 +205,14 @@ static int id_duplicado(const t_contexto *ctx, int id)
                              &reg_ind,
                              sizeof(t_reg_indice),
                              compara_reg_indice_ALU) != NO_EXISTE;
+}
+
+int titulo_leer_ALU(FILE *arch, unsigned nro_reg, t_titulo *t)
+{
+    if(fseek(arch, nro_reg * sizeof(t_titulo), SEEK_SET)!=0)
+        return ERROR;
+    if(fread(t, sizeof(t_titulo), 1, arch)!=1)
+        return ERROR;
+
+    return OK;
 }

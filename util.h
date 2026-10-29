@@ -32,5 +32,6 @@ void salir_y_persistir_ALU(t_indice *ind_socios, t_indice *ind_titulos,
                               t_matriz_consumo matriz_consumo, const t_fecha *fecha_proceso);
 
 void carga_manual(const char *mensaje, char *cadena, const size_t tam_cad);
+int archivo_copiar_ALU(const char *origen, const char *destino);
 
 #endif /* UTIL_H_INCLUDED */

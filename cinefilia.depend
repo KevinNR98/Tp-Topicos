@@ -293,3 +293,150 @@
 	<string.h>
 	"validaciones.h"
 
+1793282422 source:c:\users\admin\downloads\tp-topicos\alquiler.c
+	<stdlib.h>
+	<string.h>
+	"alquiler.h"
+	"cadena.h"
+	"util.h"
+
+1793282454 c:\users\admin\downloads\tp-topicos\alquiler.h
+	"socio.h"
+	"titulo.h"
+
+1793282735 c:\users\admin\downloads\tp-topicos\socio.h
+	<stdio.h>
+	"fecha.h"
+	"indice.h"
+	"lectura.h"
+	"validaciones.h"
+
+1793278003 c:\users\admin\downloads\tp-topicos\fecha.h
+
+1793278003 c:\users\admin\downloads\tp-topicos\indice.h
+	<stddef.h>
+
+1793278003 c:\users\admin\downloads\tp-topicos\lectura.h
+	<stdio.h>
+	"indice.h"
+	"fecha.h"
+
+1793278003 c:\users\admin\downloads\tp-topicos\validaciones.h
+
+1793283010 c:\users\admin\downloads\tp-topicos\titulo.h
+	<stdio.h>
+	"indice.h"
+	"lectura.h"
+
+1793278003 c:\users\admin\downloads\tp-topicos\cadena.h
+
+1793283321 c:\users\admin\downloads\tp-topicos\util.h
+	<stdio.h>
+	<stdlib.h>
+	"alquiler.h"
+
+1793278003 source:c:\users\admin\downloads\tp-topicos\auditoria.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"auditoria.h"
+	"lectura.h"
+	"cadena.h"
+	"util.h"
+	"indice.h"
+
+1793278003 c:\users\admin\downloads\tp-topicos\auditoria.h
+	"fecha.h"
+	"socio.h"
+
+1793278003 source:c:\users\admin\downloads\tp-topicos\cadena.c
+	<string.h>
+	<ctype.h>
+	<stddef.h>
+	"cadena.h"
+
+1793278003 source:c:\users\admin\downloads\tp-topicos\fecha.c
+	<stdio.h>
+	<string.h>
+	<ctype.h>
+	<time.h>
+	"fecha.h"
+	"util.h"
+	"indice.h"
+
+1793278003 source:c:\users\admin\downloads\tp-topicos\indice.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"indice.h"
+
+1793278003 source:c:\users\admin\downloads\tp-topicos\lectura.c
+	<string.h>
+	"lectura.h"
+	"util.h"
+	"cadena.h"
+	"socio.h"
+	"titulo.h"
+	"config.h"
+
+1793278003 c:\users\admin\downloads\tp-topicos\config.h
+
+1793278003 source:c:\users\admin\downloads\tp-topicos\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"config.h"
+	"util.h"
+	"menu.h"
+	"fecha.h"
+	"indice.h"
+	"lectura.h"
+	"socio.h"
+	"titulo.h"
+	"novedad.h"
+	"alquiler.h"
+	"auditoria.h"
+	"generador.h"
+
+1793278003 c:\users\admin\downloads\tp-topicos\menu.h
+
+1793278003 c:\users\admin\downloads\tp-topicos\novedad.h
+	"titulo.h"
+
+1793278003 c:\users\admin\downloads\tp-topicos\generador.h
+
+1793278003 source:c:\users\admin\downloads\tp-topicos\novedad.c
+	<string.h>
+	"novedad.h"
+	"cadena.h"
+
+1793282846 source:c:\users\admin\downloads\tp-topicos\socio.c
+	<stdlib.h>
+	<string.h>
+	<conio.h>
+	"socio.h"
+	"cadena.h"
+	"util.h"
+	"auditoria.h"
+	"config.h"
+	"menu.h"
+
+1793283237 source:c:\users\admin\downloads\tp-topicos\titulo.c
+	<stdlib.h>
+	<string.h>
+	"titulo.h"
+	"cadena.h"
+	"util.h"
+
+1793283313 source:c:\users\admin\downloads\tp-topicos\util.c
+	<string.h>
+	"util.h"
+	"cadena.h"
+	"config.h"
+
+1793278003 source:c:\users\admin\downloads\tp-topicos\validaciones.c
+	<ctype.h>
+	<stdio.h>
+	<string.h>
+	"validaciones.h"
+

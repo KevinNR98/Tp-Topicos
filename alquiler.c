@@ -83,7 +83,7 @@ int alquilar_ALU(t_indice *ind_socios, t_indice *ind_titulos, const char *path_s
     t_socio socio;
     t_titulo titulo;
     t_reg_indice reg_soc, reg_tit;
-    char cadena[70];
+    char cadena[TAM_INGRESO];
     char extra;
 
     carga_manual("\nIngrese DNI de socio: ", cadena, sizeof(cadena));
@@ -147,7 +147,7 @@ int alquilar_ALU(t_indice *ind_socios, t_indice *ind_titulos, const char *path_s
     printf("Titulo\t: %d - %s (%s)\n", titulo.id, titulo.titulo, titulo.genero);
     puts("=============================================");
 
-    sumar_alquiler_matriz(matriz_consumo, socio.plan, titulo.genero);
+    matriz_consumo[plan_indice(socio.plan)][genero_indice(titulo.genero)]++;
 
     fseek(pf_titulos, sizeof(t_titulo) * reg_tit.nro_reg, SEEK_SET);
     fwrite(&titulo, sizeof(t_titulo), 1, pf_titulos);
@@ -157,15 +157,4 @@ int alquilar_ALU(t_indice *ind_socios, t_indice *ind_titulos, const char *path_s
     fclose(pf_socios);
 
     return OK;
-}
-
-void sumar_alquiler_matriz(int matriz[][CANT_GENEROS], const char *plan, const char *genero)
-{
-    int f = plan_indice(plan);
-    int c = genero_indice(genero);
-
-    if (f >= 0 && f < CANT_PLANES && c >= 0 && c < CANT_GENEROS)
-    {
-        matriz[f][c]++;
-    }
 }
