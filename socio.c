@@ -785,7 +785,7 @@ int socios_listar_ALU(const t_indice *indice, const char *path)
     if(!arch)
         return ERROR;
 
-    printf("%-8s %-13s %-31s \t%-10s %c %-10s %-6s %-10s %c %-10s %-31s\n", "DNI","CUIL","APELLIDOS Y NOMBRES","NACIMIENTO",
+    printf("%-8s %-13s %-61s \t%-10s %c %-10s %-6s %-10s %c %-10s %-31s\n", "DNI","CUIL","APELLIDOS Y NOMBRES","NACIMIENTO",
            'S', "AFILIACION","CATEG.","ULT.CUOTA",'E', "PLAN","EMAIL TUTOR");
 
     for(i = 0; i < indice->cantidad_elementos_actual; i++)
@@ -987,7 +987,7 @@ static int apyn_valido(const char* s)
 
 void socio_mostrar_alu(const t_socio *socio)
 {
-    char nacimiento[11], afiliacion[11], ultima_cuota[11];
+    char nacimiento[TAM_FECHA_TXT], afiliacion[TAM_FECHA_TXT], ultima_cuota[TAM_FECHA_TXT];
 
     sprintf(nacimiento,"%02d/%02d/%04d", socio->fecha_nacimiento.dia, socio->fecha_nacimiento.mes, socio->fecha_nacimiento.anio);
 

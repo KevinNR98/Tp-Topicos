@@ -21,7 +21,7 @@ Observaciones:  -
 void salir_y_persistir_ALU(t_indice *ind_socios, t_indice *ind_titulos,
                               t_matriz_consumo matriz_consumo, const t_fecha *fecha_proceso)
 {
-    char fecha[12], nom_arch[100];
+    char fecha[TAM_FECHA_TXT], nom_arch[TAM_INGRESO];
     FILE *arch;
 
     sprintf (fecha, "%04d%02d%02d", fecha_proceso->anio, fecha_proceso->mes, fecha_proceso->dia);
