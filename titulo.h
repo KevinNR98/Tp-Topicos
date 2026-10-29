@@ -43,8 +43,20 @@ int  titulos_listar(const t_indice *indice, const char *path);
 /*            FUNCIONES A IMPLEMENTAR POR EL ALUMNO (version _ALU)             */
 /*============================================================================*/
 
+#define TIPO_ERR_ID     "ID"
+#define TIPO_ERR_TITULO "TITULO"
+#define TIPO_ERR_GENERO "GENERO"
+#define TIPO_ERR_STOCK  "STOCK"
+
 int texto_a_titulo_ALU(const char *linea, void *reg);
 int valida_titulo_ALU(void *reg, const t_contexto *ctx, char *tipo_error);
 int titulos_listar_ALU(const t_indice *indice, const char *path);
 
+long obtener_clave_titulo(const void *reg);
+int es_titulo_activo(const void *registro);
+void rechazar_titulo(const void *reg, const char *linea, const char *tipo_error, const t_fecha *fecha_proc);
+
+int titulo_leer_ALU(FILE *arch, unsigned nro_reg, t_titulo *t);
+
 #endif /* TITULO_H_INCLUDED */
+
