@@ -17,10 +17,48 @@ Observaciones:  -
 ******************************************************************************/
 void tablero_mostrar_ALU(t_matriz_consumo m)
 {
-    /* TODO: reemplazar esta llamada a la funcion de la catedra por su propia
-       implementacion. En la entrega no puede quedar ninguna llamada a una
-       funcion de la biblioteca que tenga version _ALU. */
-    tablero_mostrar(m);
+    int suma = 0;
+    int total = 0;
+    char planes[CANT_PLANES][TAM_PLAN] = {"Basic", "Premium", "VIP", "Family"};
+        printf("%-12s%10s%10s%10s%10s%18s%10s\n",
+           "PLAN",
+           "Accion",
+           "Drama",
+           "Comedia",
+           "Terror",
+           "Ciencia Ficcion",
+           "TOTAL");
+    for(int i = 0; i < CANT_PLANES; i++)
+    {
+        printf("%-12s", planes[i]);
+        for(int j = 0; j < CANT_GENEROS; j++)
+        {
+            if(j == CANT_GENEROS - 1)
+                printf("%18d", m[i][j]);
+            else
+                printf("%10d", m[i][j]);
+            suma += m[i][j];
+        }
+        printf("%10d\n", suma);
+        suma = 0;
+    }
+    printf("%-12s", "TOTAL");
+
+    for(int j=0; j < CANT_GENEROS; j++)
+    {
+        for(int i=0; i < CANT_PLANES; i++)
+        {
+            suma += m[i][j];
+        }
+        if(j == CANT_GENEROS - 1)
+            printf("%18d", suma);
+        else
+            printf("%10d", suma);
+        total += suma;
+        suma = 0;
+    }
+
+    printf("%10d\n", total);
 }
 
 /******************************************************************************
@@ -42,8 +80,81 @@ Observaciones:  Si una etapa falla se informa el motivo y no se ejecutan las
 int alquilar_ALU(t_indice *ind_socios, t_indice *ind_titulos, const char *path_socios,
              const char *path_titulos, t_matriz_consumo matriz_consumo, const t_fecha *fecha_proceso)
 {
-    /* TODO: reemplazar esta llamada a la funcion de la catedra por su propia
-       implementacion. En la entrega no puede quedar ninguna llamada a una
-       funcion de la biblioteca que tenga version _ALU. */
-    return alquilar(ind_socios, ind_titulos, path_socios, path_titulos, matriz_consumo, fecha_proceso);
+    t_socio socio;
+    t_titulo titulo;
+    t_reg_indice reg_soc, reg_tit;
+    char cadena[TAM_INGRESO];
+    char extra;
+
+    carga_manual("\nIngrese DNI de socio: ", cadena, sizeof(cadena));
+
+    if(sscanf(cadena, "%ld%c", &reg_soc.id, &extra) != 1)
+    {
+        puts("\nAlquiler rechazado: DNI invalido.");
+        return ERROR;
+    }
+
+    if(indice_buscar_ALU(ind_socios, &reg_soc, sizeof(t_reg_indice), compara_reg_indice_ALU) == NO_EXISTE)
+    {
+        puts("\nAlquiler rechazado: el socio no existe o esta dado de baja.");
+        return ERROR;
+    }
+
+    carga_manual("\nIngrese ID del Titulo: ", cadena, sizeof(cadena));
+
+    if(sscanf(cadena, "%ld%c", &reg_tit.id, &extra) != 1)
+    {
+        puts("\nAlquiler rechazado: ID invalido.");
+        return ERROR;
+    }
+
+    if(indice_buscar_ALU(ind_titulos, &reg_tit, sizeof(t_reg_indice), compara_reg_indice_ALU) == NO_EXISTE)
+    {
+        puts("\nAlquiler rechazado: el titulo no existe o esta dado de baja.");
+        return ERROR;
+    }
+
+    FILE *pf_titulos = fopen(path_titulos, "r+b");
+
+    if(!pf_titulos)
+        return ERROR;
+
+    fseek(pf_titulos, sizeof(t_titulo) * reg_tit.nro_reg, SEEK_SET);
+    fread(&titulo, sizeof(t_titulo), 1, pf_titulos);
+
+    if(titulo.stock == 0)
+    {
+        printf("\nAlquiler rechazado: sin stock de \"%s\"\n", titulo.titulo);
+        fclose(pf_titulos);
+        return ERROR;
+    }
+
+    FILE *pf_socios = fopen(path_socios, "rb");
+    if(!pf_socios)
+    {
+        fclose(pf_titulos);
+        return ERROR;
+    }
+
+
+    fseek(pf_socios, sizeof(t_socio) * reg_soc.nro_reg, SEEK_SET);
+    fread(&socio, sizeof(t_socio), 1, pf_socios);
+    titulo.stock--;
+
+    puts("========== COMPROBANTE DE ALQUILER ==========");
+    printf("Fecha\t: %d/%d/%d\n", fecha_proceso->dia, fecha_proceso->mes, fecha_proceso->anio);
+    printf("Socio\t: %ld - %s (plan %s)\n", socio.dni, socio.apellidos_nombres, socio.plan);
+    printf("Titulo\t: %d - %s (%s)\n", titulo.id, titulo.titulo, titulo.genero);
+    puts("=============================================");
+
+    matriz_consumo[plan_indice(socio.plan)][genero_indice(titulo.genero)]++;
+
+    fseek(pf_titulos, sizeof(t_titulo) * reg_tit.nro_reg, SEEK_SET);
+    fwrite(&titulo, sizeof(t_titulo), 1, pf_titulos);
+    fflush(pf_titulos);
+
+    fclose(pf_titulos);
+    fclose(pf_socios);
+
+    return OK;
 }
