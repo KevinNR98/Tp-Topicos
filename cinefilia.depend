@@ -293,49 +293,49 @@
 	<string.h>
 	"validaciones.h"
 
-1793282422 source:c:\users\admin\downloads\tp-topicos\alquiler.c
+1793715167 source:c:\users\admin\downloads\tp-topicos\alquiler.c
 	<stdlib.h>
 	<string.h>
 	"alquiler.h"
 	"cadena.h"
 	"util.h"
 
-1793282454 c:\users\admin\downloads\tp-topicos\alquiler.h
+1793703451 c:\users\admin\downloads\tp-topicos\alquiler.h
 	"socio.h"
 	"titulo.h"
 
-1793282735 c:\users\admin\downloads\tp-topicos\socio.h
+1793713797 c:\users\admin\downloads\tp-topicos\socio.h
 	<stdio.h>
 	"fecha.h"
 	"indice.h"
 	"lectura.h"
 	"validaciones.h"
 
-1793278003 c:\users\admin\downloads\tp-topicos\fecha.h
+1793703451 c:\users\admin\downloads\tp-topicos\fecha.h
 
-1793278003 c:\users\admin\downloads\tp-topicos\indice.h
+1793703451 c:\users\admin\downloads\tp-topicos\indice.h
 	<stddef.h>
 
-1793278003 c:\users\admin\downloads\tp-topicos\lectura.h
+1793703451 c:\users\admin\downloads\tp-topicos\lectura.h
 	<stdio.h>
 	"indice.h"
 	"fecha.h"
 
-1793278003 c:\users\admin\downloads\tp-topicos\validaciones.h
+1793703451 c:\users\admin\downloads\tp-topicos\validaciones.h
 
-1793283010 c:\users\admin\downloads\tp-topicos\titulo.h
+1793703451 c:\users\admin\downloads\tp-topicos\titulo.h
 	<stdio.h>
 	"indice.h"
 	"lectura.h"
 
-1793278003 c:\users\admin\downloads\tp-topicos\cadena.h
+1793703451 c:\users\admin\downloads\tp-topicos\cadena.h
 
-1793283321 c:\users\admin\downloads\tp-topicos\util.h
+1793703451 c:\users\admin\downloads\tp-topicos\util.h
 	<stdio.h>
 	<stdlib.h>
 	"alquiler.h"
 
-1793278003 source:c:\users\admin\downloads\tp-topicos\auditoria.c
+1793703451 source:c:\users\admin\downloads\tp-topicos\auditoria.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -345,17 +345,17 @@
 	"util.h"
 	"indice.h"
 
-1793278003 c:\users\admin\downloads\tp-topicos\auditoria.h
+1793703451 c:\users\admin\downloads\tp-topicos\auditoria.h
 	"fecha.h"
 	"socio.h"
 
-1793278003 source:c:\users\admin\downloads\tp-topicos\cadena.c
+1793703451 source:c:\users\admin\downloads\tp-topicos\cadena.c
 	<string.h>
 	<ctype.h>
 	<stddef.h>
 	"cadena.h"
 
-1793278003 source:c:\users\admin\downloads\tp-topicos\fecha.c
+1793703451 source:c:\users\admin\downloads\tp-topicos\fecha.c
 	<stdio.h>
 	<string.h>
 	<ctype.h>
@@ -364,13 +364,13 @@
 	"util.h"
 	"indice.h"
 
-1793278003 source:c:\users\admin\downloads\tp-topicos\indice.c
+1793703451 source:c:\users\admin\downloads\tp-topicos\indice.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
 	"indice.h"
 
-1793278003 source:c:\users\admin\downloads\tp-topicos\lectura.c
+1793709376 source:c:\users\admin\downloads\tp-topicos\lectura.c
 	<string.h>
 	"lectura.h"
 	"util.h"
@@ -379,9 +379,9 @@
 	"titulo.h"
 	"config.h"
 
-1793278003 c:\users\admin\downloads\tp-topicos\config.h
+1793703451 c:\users\admin\downloads\tp-topicos\config.h
 
-1793278003 source:c:\users\admin\downloads\tp-topicos\main.c
+1793703451 source:c:\users\admin\downloads\tp-topicos\main.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -398,22 +398,23 @@
 	"auditoria.h"
 	"generador.h"
 
-1793278003 c:\users\admin\downloads\tp-topicos\menu.h
+1793703451 c:\users\admin\downloads\tp-topicos\menu.h
 
-1793278003 c:\users\admin\downloads\tp-topicos\novedad.h
+1793705960 c:\users\admin\downloads\tp-topicos\novedad.h
 	"titulo.h"
 
-1793278003 c:\users\admin\downloads\tp-topicos\generador.h
+1793703451 c:\users\admin\downloads\tp-topicos\generador.h
 
-1793278003 source:c:\users\admin\downloads\tp-topicos\novedad.c
+1793714945 source:c:\users\admin\downloads\tp-topicos\novedad.c
 	<string.h>
+	<stdlib.h>
 	"novedad.h"
 	"cadena.h"
 
-1793282846 source:c:\users\admin\downloads\tp-topicos\socio.c
+1793714115 source:c:\users\admin\downloads\tp-topicos\socio.c
 	<stdlib.h>
+	<ctype.h>
 	<string.h>
-	<conio.h>
 	"socio.h"
 	"cadena.h"
 	"util.h"
@@ -421,20 +422,20 @@
 	"config.h"
 	"menu.h"
 
-1793283237 source:c:\users\admin\downloads\tp-topicos\titulo.c
+1793703451 source:c:\users\admin\downloads\tp-topicos\titulo.c
 	<stdlib.h>
 	<string.h>
 	"titulo.h"
 	"cadena.h"
 	"util.h"
 
-1793283313 source:c:\users\admin\downloads\tp-topicos\util.c
+1793703451 source:c:\users\admin\downloads\tp-topicos\util.c
 	<string.h>
 	"util.h"
 	"cadena.h"
 	"config.h"
 
-1793278003 source:c:\users\admin\downloads\tp-topicos\validaciones.c
+1793703451 source:c:\users\admin\downloads\tp-topicos\validaciones.c
 	<ctype.h>
 	<stdio.h>
 	<string.h>

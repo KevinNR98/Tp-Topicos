@@ -103,5 +103,24 @@ int es_socio_activo(const void *registro);
 void rechazar_socio(const void *reg, const char *linea, const char *tipo_error, const t_fecha *fecha_proc);
 
 void socio_mostrar_alu(const t_socio *socio);
+void mostrar_formato_socio(const char* encabezado, const t_socio *socio);
+
+void alta_dni(char *dni, long *dni_socio);
+void alta_cuil(char *cuil);
+void alta_apyn(char *apyn);
+void alta_fecha(const char *mensaje, t_fecha *fecha);
+void alta_sexo(char *sexo);
+void alta_categoria(char *categoria);
+void alta_plan(char *plan);
+void alta_email(char *email);
+
+int verificar_dni_modificar(t_reg_indice *reg_buscado, t_indice *indice);
+void modificar_cuil(char *cuil);
+void modificar_apyn(char *apyn);
+void modificar_fecha(const char *tipo, t_fecha *fecha);
+void modificar_sexo(char *sexo);
+void modificar_categoria(char *categoria);
+void modificar_plan(char *plan);
+void modificar_email(char *email);
 
 #endif /* SOCIO_H_INCLUDED */

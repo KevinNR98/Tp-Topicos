@@ -136,13 +136,12 @@ Observaciones:  -
 ******************************************************************************/
 int cargar_indices_ALU(t_indice *ind_socios, t_indice *ind_titulos)
 {
-    indice_cargar_ALU(ARCH_SOCIOS_BIN, ind_socios, sizeof(t_socio), obtener_clave_socio, es_socio_activo, compara_reg_indice_ALU);
-    indice_cargar_ALU(ARCH_TITULOS_BIN, ind_titulos, sizeof(t_titulo), obtener_clave_titulo, es_titulo_activo, compara_reg_indice_ALU);
+    if(!indice_cargar_ALU(ARCH_SOCIOS_BIN, ind_socios, sizeof(t_socio), obtener_clave_socio, es_socio_activo, compara_reg_indice_ALU))
+        return 0;
+    if(!indice_cargar_ALU(ARCH_TITULOS_BIN, ind_titulos, sizeof(t_titulo), obtener_clave_titulo, es_titulo_activo, compara_reg_indice_ALU))
+        return 0;
 
-    if(indice_vacio_ALU(ind_socios) || indice_vacio_ALU(ind_titulos))
-        return ERROR;
-
-    return OK;
+    return 1;
 }
 
 /******************************************************************************
@@ -181,15 +180,21 @@ int generar_binarios_ALU(t_indice *ind_socios, t_indice *ind_titulos, const t_fe
     t_socio socio;
     t_titulo titulo;
 
-    leer_archivo_texto_ALU(ARCH_SOCIOS_CSV, arch_socios, ind_socios, &socio, sizeof(t_socio), fecha_proceso,
-                           texto_a_socio_ALU, valida_socio_ALU, rechazar_socio, obtener_clave_socio, &aceptados, &rechazados);
-    printf("Socios: %u aceptados %u rechazados ", aceptados, rechazados);
-    if(rechazados > 0)
-        printf("(ver archivos/errores_socios.txt)");
+    if(leer_archivo_texto_ALU(ARCH_SOCIOS_CSV, arch_socios, ind_socios, &socio, sizeof(t_socio), fecha_proceso,
+                           texto_a_socio_ALU, valida_socio_ALU, rechazar_socio, obtener_clave_socio, &aceptados, &rechazados))
+    {
+        printf("Socios: %u aceptados %u rechazados ", aceptados, rechazados);
+        if(rechazados > 0)
+            printf("(ver archivos/errores_socios.txt)");
+    }
+    else
+        printf("No se pudo leer el archivo %s", ARCH_SOCIOS_CSV);
     putchar('\n');
-    leer_archivo_texto_ALU(ARCH_TITULOS_CSV, arch_titulos, ind_titulos, &titulo, sizeof(t_titulo), fecha_proceso,
-                           texto_a_titulo_ALU, valida_titulo_ALU, rechazar_titulo, obtener_clave_titulo, &aceptados, &rechazados);
-    printf("Titulos: %u aceptados %u rechazados\n\n", aceptados, rechazados);
+    if(leer_archivo_texto_ALU(ARCH_TITULOS_CSV, arch_titulos, ind_titulos, &titulo, sizeof(t_titulo), fecha_proceso,
+                           texto_a_titulo_ALU, valida_titulo_ALU, rechazar_titulo, obtener_clave_titulo, &aceptados, &rechazados))
+        printf("Titulos: %u aceptados %u rechazados\n\n", aceptados, rechazados);
+    else
+        printf("No se pudo leer el archivo %s\n", ARCH_TITULOS_CSV);
 
     fclose(arch_socios);
     fclose(arch_titulos);

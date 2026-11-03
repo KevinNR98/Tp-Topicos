@@ -261,7 +261,11 @@ int indice_cargar_ALU(const char *path, t_indice *indice, size_t tamanyo_reg,
     t_reg_indice reg_indice;
     unsigned nro_reg = 0;
 
-    fread(registro, tamanyo_reg, 1, f_bin);
+    if(!fread(registro, tamanyo_reg, 1, f_bin))
+    {
+        fclose(f_bin);
+        return ERROR;
+    }
 
     while(!feof(f_bin))
     {
