@@ -12,7 +12,6 @@
 static char parsear_sexo(const char *cad);
 static long parsear_dni(const char *cad);
 static int dni_duplicado(const t_contexto *ctx, long dni);
-static int apyn_valido(const char* s);
 
 /*============================================================================*/
 /*            FUNCIONES A IMPLEMENTAR POR EL ALUMNO (version _ALU)             */
@@ -155,11 +154,6 @@ int valida_socio_ALU(void *reg, const t_contexto *ctx, char *tipo_error)
     }
 
     //4. apellido y nombre
-    if(!apyn_valido(socio->apellidos_nombres))
-    {
-        copiar_cadena(tipo_error, TIPO_ERR_APELLIDOS_NOMBRES, TAM_TIPO_ERROR);
-        return ERROR;
-    }
     arreglar_apyn_ALU(socio->apellidos_nombres);
     if(*socio->apellidos_nombres == '\0')
     {
@@ -962,26 +956,6 @@ static int dni_duplicado(const t_contexto *ctx, long dni)
     reg_ind.id = dni;
 
     return (indice_buscar_ALU(ctx->indice, &reg_ind, sizeof(t_reg_indice),compara_reg_indice_ALU) != NO_EXISTE);
-}
-
-static int apyn_valido(const char* s)
-{
-    if(!s || *s == '\0')
-        return 0;
-
-    int tiene_letras = 0;
-
-    while(*s)
-    {
-        if(isdigit((unsigned char)*s))
-            return 0;
-
-        if(isalpha((unsigned char)*s))
-            tiene_letras = 1;
-
-        s++;
-    }
-    return tiene_letras;
 }
 
 
