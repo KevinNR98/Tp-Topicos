@@ -1,4 +1,5 @@
 #include <string.h>
+#include <ctype.h>
 #include "lectura.h"
 #include "util.h"
 #include "cadena.h"
@@ -61,6 +62,13 @@ int leer_archivo_texto_ALU(const char *path_txt, FILE *arch_bin, t_indice *indic
     // Recorrer el archivo de texto línea por línea
     while (fgets(linea, sizeof(linea), pf))
     {
+
+        char *p = linea;
+        while (*p && isspace((unsigned char)*p))
+            p++;
+
+        if (*p == '\0')
+            continue;
 
         // Parsear la línea al buffer de registro
         if (parsear(linea, reg) != OK) //
