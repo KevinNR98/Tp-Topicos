@@ -1,4 +1,5 @@
 #include <string.h>
+#include <ctype.h>
 #include "lectura.h"
 #include "util.h"
 #include "cadena.h"
@@ -51,18 +52,25 @@ int leer_archivo_texto_ALU(const char *path_txt, FILE *arch_bin, t_indice *indic
     char linea[TAM_LINEA + 1];
     char error_msg[TAM_TIPO_ERROR];
 
-    // Armar el contexto que se compartirá en cada validación
+    // Armar el contexto que se compartirï¿½ en cada validaciï¿½n
     t_contexto ctx;
     ctx.indice = indice;
     ctx.arch_bin = arch_bin;
     ctx.fecha_proceso = fecha_proceso;
     ctx.id_modificando = 0; // 0 porque son altas masivas desde el archivo de texto
 
-    // Recorrer el archivo de texto línea por línea
+    // Recorrer el archivo de texto lï¿½nea por lï¿½nea
     while (fgets(linea, sizeof(linea), pf))
     {
 
-        // Parsear la línea al buffer de registro
+        char *p = linea;
+        while (*p && isspace((unsigned char)*p))
+            p++;
+
+        if (*p == '\0')
+            continue;
+
+        // Parsear la lï¿½nea al buffer de registro
         if (parsear(linea, reg) != OK) //
         {
             rechazar(reg, linea, "FORMATO", fecha_proceso);
@@ -70,7 +78,7 @@ int leer_archivo_texto_ALU(const char *path_txt, FILE *arch_bin, t_indice *indic
             continue;
         }
 
-        // Validar el registro pasándole el contexto
+        // Validar el registro pasï¿½ndole el contexto
         if (validar(reg, &ctx, error_msg) != OK)
         {
             rechazar(reg, linea, error_msg, fecha_proceso);
@@ -86,7 +94,7 @@ int leer_archivo_texto_ALU(const char *path_txt, FILE *arch_bin, t_indice *indic
         fwrite(reg, tamanyo, 1, arch_bin);
         fflush(arch_bin);
 
-        // Insertar en el índice en memoria
+        // Insertar en el ï¿½ndice en memoria
         t_reg_indice reg_ind;
         reg_ind.nro_reg = nro_reg;
         reg_ind.id = obtener_clave(reg);
@@ -158,9 +166,6 @@ Observaciones:  Los rechazos de socios se auditan en errores_socios.txt; los
 ******************************************************************************/
 int generar_binarios_ALU(t_indice *ind_socios, t_indice *ind_titulos, const t_fecha *fecha_proceso)
 {
-    // elimina el archivo de errores anterior para no acumular corridas pasadas
-    remove(ARCH_ERRORES);
-
     FILE *arch_socios = fopen(ARCH_SOCIOS_BIN, "wb+");
     FILE *arch_titulos = fopen(ARCH_TITULOS_BIN, "wb+");
 
@@ -172,6 +177,15 @@ int generar_binarios_ALU(t_indice *ind_socios, t_indice *ind_titulos, const t_fe
         puts("Error en la apertura de los archivos.");
         return ERROR;
     }
+
+    FILE *f_check_csv = fopen(ARCH_SOCIOS_CSV, "rt");
+    //solo se limpia la auditoria si el archivo csv de socios existe para ser procesado
+    if(f_check_csv)
+    {
+        fclose(f_check_csv);
+        remove(ARCH_ERRORES);
+    }
+
 
     indice_vaciar_ALU(ind_socios);
     indice_vaciar_ALU(ind_titulos);
@@ -185,11 +199,13 @@ int generar_binarios_ALU(t_indice *ind_socios, t_indice *ind_titulos, const t_fe
     {
         printf("Socios: %u aceptados %u rechazados ", aceptados, rechazados);
         if(rechazados > 0)
-            printf("(ver archivos/errores_socios.txt)");
+            printf("(ver %s)", ARCH_ERRORES);
     }
     else
         printf("No se pudo leer el archivo %s", ARCH_SOCIOS_CSV);
+
     putchar('\n');
+
     if(leer_archivo_texto_ALU(ARCH_TITULOS_CSV, arch_titulos, ind_titulos, &titulo, sizeof(t_titulo), fecha_proceso,
                            texto_a_titulo_ALU, valida_titulo_ALU, rechazar_titulo, obtener_clave_titulo, &aceptados, &rechazados))
         printf("Titulos: %u aceptados %u rechazados\n\n", aceptados, rechazados);

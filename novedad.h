@@ -33,4 +33,3 @@ int novedades_procesar_ALU(t_indice *indice, const char *path_novedades,
 int reservar_rechazos(FILE *arch, t_rechazo **rechazos);
 
 #endif /* NOVEDAD_H_INCLUDED */
-

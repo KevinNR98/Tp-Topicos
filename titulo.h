@@ -59,4 +59,3 @@ void rechazar_titulo(const void *reg, const char *linea, const char *tipo_error,
 int titulo_leer_ALU(FILE *arch, unsigned nro_reg, t_titulo *t);
 
 #endif /* TITULO_H_INCLUDED */
-

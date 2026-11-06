@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <conio.h>
 #include "socio.h"
 #include "cadena.h"
 #include "util.h"
@@ -11,7 +12,6 @@
 static char parsear_sexo(const char *cad);
 static long parsear_dni(const char *cad);
 static int dni_duplicado(const t_contexto *ctx, long dni);
-static int apyn_valido(const char* s);
 
 /*============================================================================*/
 /*            FUNCIONES A IMPLEMENTAR POR EL ALUMNO (version _ALU)             */
@@ -154,11 +154,6 @@ int valida_socio_ALU(void *reg, const t_contexto *ctx, char *tipo_error)
     }
 
     //4. apellido y nombre
-    if(!apyn_valido(socio->apellidos_nombres))
-    {
-        copiar_cadena(tipo_error, TIPO_ERR_APELLIDOS_NOMBRES, TAM_TIPO_ERROR);
-        return ERROR;
-    }
     arreglar_apyn_ALU(socio->apellidos_nombres);
     if(*socio->apellidos_nombres == '\0')
     {
@@ -322,7 +317,7 @@ Observaciones:  -
 ******************************************************************************/
 int socio_alta_manual_ALU(t_indice *indice, const char *path, const t_fecha *fecha_proceso)
 {
-    t_socio socio = {0};
+   t_socio socio = {0};
     t_reg_indice reg;
     char dni[TAM_INGRESO];
     char tipo_error[TAM_TIPO_ERROR];
@@ -516,6 +511,8 @@ int socio_baja_ALU(t_indice *indice, const char *path)
     fclose(pf);
 
     indice_eliminar_ALU(indice, &reg_eliminar, sizeof(t_reg_indice), compara_reg_indice_ALU);
+
+    puts("\nSocio dado de baja correctamente.\n");
 
     return OK;
 }
@@ -722,26 +719,6 @@ static int dni_duplicado(const t_contexto *ctx, long dni)
     return (indice_buscar_ALU(ctx->indice, &reg_ind, sizeof(t_reg_indice),compara_reg_indice_ALU) != NO_EXISTE);
 }
 
-static int apyn_valido(const char* s)
-{
-    if(!s || *s == '\0')
-        return 0;
-
-    int tiene_letras = 0;
-
-    while(*s)
-    {
-        if(isdigit((unsigned char)*s))
-            return 0;
-
-        if(isalpha((unsigned char)*s))
-            tiene_letras = 1;
-
-        s++;
-    }
-    return tiene_letras;
-}
-
 
 void socio_mostrar_alu(const t_socio *socio)
 {
@@ -757,7 +734,6 @@ void socio_mostrar_alu(const t_socio *socio)
            socio->sexo, afiliacion, socio->categoria, ultima_cuota, socio->estado,
            socio->plan, socio->email_tutor);
 }
-
 
 void alta_dni(char *dni, long *dni_socio)
 {

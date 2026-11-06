@@ -261,13 +261,7 @@ int indice_cargar_ALU(const char *path, t_indice *indice, size_t tamanyo_reg,
     t_reg_indice reg_indice;
     unsigned nro_reg = 0;
 
-    if(!fread(registro, tamanyo_reg, 1, f_bin))
-    {
-        fclose(f_bin);
-        return ERROR;
-    }
-
-    while(!feof(f_bin))
+    while(fread(registro, tamanyo_reg, 1, f_bin))
     {
         if(es_activo(registro))
         {
@@ -276,7 +270,6 @@ int indice_cargar_ALU(const char *path, t_indice *indice, size_t tamanyo_reg,
             indice_insertar_ALU(indice, &reg_indice, sizeof(t_reg_indice), cmp);
         }
         nro_reg++;
-        fread(registro, tamanyo_reg, 1, f_bin);
     }
 
     free(registro);

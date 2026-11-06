@@ -22,6 +22,7 @@ void arreglar_apyn_ALU(char *s)
     char temp[MAX_STR] = {0};
     char *p_src = s;
     char *p_dst = temp;
+    int tiene_coma = (strchr(s, ',') != NULL);
     int coma_puesta = 0;
     int nueva_palabra = 1;
 
@@ -32,10 +33,23 @@ void arreglar_apyn_ALU(char *s)
             //solo actua si no esta al inicio y el ultimo caracter escrito no es un espacio
             if (p_dst > temp && *(p_dst - 1) != ' ')
             {
-                //si aun no se fijo el apellido o si es un espacio entre nombres
-                if (!coma_puesta || isspace((unsigned char)*p_src))
+                if(tiene_coma)
                 {
-                    if (!coma_puesta)
+                    //si el archivo ya traia una coma solo se pone la coma cuando vemos la original
+                    if (*p_src == ',' && !coma_puesta)
+                    {
+                        *p_dst++ = ',';
+                        coma_puesta = 1;
+
+                    }
+                    *p_dst++ = ' ';
+                    nueva_palabra = 1;
+
+                }
+                else
+                {
+                    //si no traia coma el primer espacio divide apellido de nombre
+                    if(!coma_puesta)
                     {
                         *p_dst++ = ',';
                         coma_puesta = 1;
@@ -43,7 +57,18 @@ void arreglar_apyn_ALU(char *s)
                     *p_dst++ = ' ';
                     nueva_palabra = 1;
                 }
-                //si coma_puesta == 1 y vino otra coma se ignora
+
+            }
+            else if(*p_src == ',' && tiene_coma && !coma_puesta)
+            {
+                //si habia un espacio antes de la coma lo retrocedemos para pegar la coma a la palabra
+                if(p_dst > temp && *(p_dst - 1) == ' ')
+                    p_dst--;
+
+                *p_dst++ = ',';
+                *p_dst++ = ' ';
+                coma_puesta = 1;
+                nueva_palabra = 1;
             }
         }
         else //letras del apellido o nombre

@@ -54,15 +54,7 @@ int novedades_procesar_ALU(t_indice *indice, const char *path_novedades,
     t_titulo titulo;
     int c_exitos = 0, c_rechazos = 0;
 
-    if(!fread(&novedad, sizeof(t_novedad), 1, f_nov))
-    {
-
-        fclose(f_nov);
-        fclose(f_tit);
-        return ERROR;
-    }
-
-    while(!feof(f_nov))
+    while(fread(&novedad, sizeof(t_novedad), 1, f_nov))
     {
         reg_buscado.id = novedad.titulo.id;
         switch(novedad.codigo_operacion)
@@ -156,11 +148,16 @@ int novedades_procesar_ALU(t_indice *indice, const char *path_novedades,
                 p_rec++;
                 break;
         }
-        fread(&novedad, sizeof(t_novedad), 1, f_nov);
     }
 
     fclose(f_tit);
     fclose(f_nov);
+
+    if(c_exitos == 0 && c_rechazos == 0)
+    {
+        free(rechazos);
+        return OK;
+    }
 
     printf("REPORTE DE NOVEDADES PROCESADAS\n\nCantidad de exitos: %d\nCantidad de rechazos: %d\n\n", c_exitos, c_rechazos);
 
@@ -181,7 +178,7 @@ int reservar_rechazos(FILE *arch, t_rechazo **rechazos)
     long tam_arch;
     size_t max_rechazos;
 
-    //Calculo el tamaño del archivo y posteriormente la cantidad maxima de rechazos
+    //Calculo el tamaï¿½o del archivo y posteriormente la cantidad maxima de rechazos
     fseek(arch, 0, SEEK_END);
 
     tam_arch = ftell(arch);
