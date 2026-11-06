@@ -75,7 +75,7 @@ int auditoria_mostrar_ALU(const char *path)
         char dni[TAM_DNI];
         char tipo_error[TAM_TIPO_ERROR];
 
-        if (sscanf(linea, "%[^;];%[^;\n]", dni, tipo_error) == 2)
+        if (sscanf(linea, "%8[^;];%24[^;\n]", dni, tipo_error) == 2)
         {
             int encontrado = 0;
 
@@ -104,8 +104,12 @@ int auditoria_mostrar_ALU(const char *path)
                     vec = aux;
                 }
 
-                strcpy(vec[cantidad_elementos].dni, dni);
-                strcpy(vec[cantidad_elementos].tipo_error, tipo_error);
+                strncpy(vec[cantidad_elementos].dni, dni, TAM_DNI-1);
+                vec[cantidad_elementos].dni[TAM_DNI - 1] = '\0';
+
+                strncpy(vec[cantidad_elementos].tipo_error, tipo_error, TAM_TIPO_ERROR-1);
+                vec[cantidad_elementos].tipo_error[TAM_TIPO_ERROR - 1] = '\0';
+
                 vec[cantidad_elementos].cantidad = 1;
                 cantidad_elementos++;
             }

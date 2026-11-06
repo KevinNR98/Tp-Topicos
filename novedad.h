@@ -21,7 +21,6 @@ int novedades_procesar(t_indice *indice, const char *path_novedades,
 /*============================================================================*/
 
 #define TAM_MOTIVO 21
-#define MAX_RECHAZOS 100
 
 typedef struct {
     int id;
@@ -31,5 +30,6 @@ typedef struct {
 int novedades_procesar_ALU(t_indice *indice, const char *path_novedades,
                        const char *path_titulos, const t_fecha *fecha_proceso);
 
-#endif /* NOVEDAD_H_INCLUDED */
+int reservar_rechazos(FILE *arch, t_rechazo **rechazos);
 
+#endif /* NOVEDAD_H_INCLUDED */

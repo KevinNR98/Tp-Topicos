@@ -130,7 +130,7 @@ int email_valido_ALU(const char *email)
 
 static int local_valida(const char *local, int tam)
 {
-    const char* fin = local + (tam -1);//puntero al ultimo carácter
+    const char* fin = local + (tam -1);//puntero al ultimo carï¿½cter
 
     if(*local == '.' || *fin == '.')//no puede empezar ni terminar con punto
         return 0;

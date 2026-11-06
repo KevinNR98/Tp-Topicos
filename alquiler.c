@@ -120,7 +120,11 @@ int alquilar_ALU(t_indice *ind_socios, t_indice *ind_titulos, const char *path_s
         return ERROR;
 
     fseek(pf_titulos, sizeof(t_titulo) * reg_tit.nro_reg, SEEK_SET);
-    fread(&titulo, sizeof(t_titulo), 1, pf_titulos);
+    if(!fread(&titulo, sizeof(t_titulo), 1, pf_titulos))
+    {
+        fclose(pf_titulos);
+        return ERROR;
+    }
 
     if(titulo.stock == 0)
     {
@@ -136,13 +140,16 @@ int alquilar_ALU(t_indice *ind_socios, t_indice *ind_titulos, const char *path_s
         return ERROR;
     }
 
-
-    fseek(pf_socios, sizeof(t_socio) * reg_soc.nro_reg, SEEK_SET);
-    fread(&socio, sizeof(t_socio), 1, pf_socios);
+    if(!socio_leer_ALU(pf_socios, reg_soc.nro_reg, &socio))
+    {
+        fclose(pf_titulos);
+        fclose(pf_socios);
+        return ERROR;
+    }
     titulo.stock--;
 
     puts("========== COMPROBANTE DE ALQUILER ==========");
-    printf("Fecha\t: %d/%d/%d\n", fecha_proceso->dia, fecha_proceso->mes, fecha_proceso->anio);
+    printf("Fecha\t: %02d/%02d/%4d\n", fecha_proceso->dia, fecha_proceso->mes, fecha_proceso->anio);
     printf("Socio\t: %ld - %s (plan %s)\n", socio.dni, socio.apellidos_nombres, socio.plan);
     printf("Titulo\t: %d - %s (%s)\n", titulo.id, titulo.titulo, titulo.genero);
     puts("=============================================");

@@ -12,7 +12,6 @@
 static char parsear_sexo(const char *cad);
 static long parsear_dni(const char *cad);
 static int dni_duplicado(const t_contexto *ctx, long dni);
-static int apyn_valido(const char* s);
 
 /*============================================================================*/
 /*            FUNCIONES A IMPLEMENTAR POR EL ALUMNO (version _ALU)             */
@@ -155,11 +154,6 @@ int valida_socio_ALU(void *reg, const t_contexto *ctx, char *tipo_error)
     }
 
     //4. apellido y nombre
-    if(!apyn_valido(socio->apellidos_nombres))
-    {
-        copiar_cadena(tipo_error, TIPO_ERR_APELLIDOS_NOMBRES, TAM_TIPO_ERROR);
-        return ERROR;
-    }
     arreglar_apyn_ALU(socio->apellidos_nombres);
     if(*socio->apellidos_nombres == '\0')
     {
@@ -323,11 +317,9 @@ Observaciones:  -
 ******************************************************************************/
 int socio_alta_manual_ALU(t_indice *indice, const char *path, const t_fecha *fecha_proceso)
 {
-    t_socio socio = {0};
+   t_socio socio = {0};
     t_reg_indice reg;
-    char cadena[TAM_INGRESO];
     char dni[TAM_INGRESO];
-    char extra;
     char tipo_error[TAM_TIPO_ERROR];
 
     FILE *arch_bin = fopen(path, "rb+");
@@ -338,88 +330,34 @@ int socio_alta_manual_ALU(t_indice *indice, const char *path, const t_fecha *fec
     t_contexto ctx = {indice, arch_bin, fecha_proceso, 0};
 
     //DNI
-    carga_manual("\nDNI: ", cadena, sizeof(cadena));
-    strcpy(dni, cadena);
-    if(sscanf(cadena, "%ld%c", &socio.dni, &extra) != 1)
-    {
-        socio.dni = 0;
-    }
+    alta_dni(dni, &socio.dni);
 
     //CUIL
-    carga_manual("\nCUIL (XY-XXXXXXXX-Z): ", cadena, sizeof(cadena));
-    if((strlen(cadena) >= TAM_CUIL) || (sscanf(cadena, "%s", socio.cuil) != 1))
-        strcpy(socio.cuil, "00-00000000-0");
+    alta_cuil(socio.cuil);
 
     //APELLIDO Y NOMBRE
-    carga_manual("\nAPELLIDOS Y NOMBRES: ", cadena, sizeof(cadena));
-    if(strlen(cadena) >= TAM_APYN || strlen(cadena) == 0)
-        strcpy(socio.apellidos_nombres, "\0");
-    else
-        strcpy(socio.apellidos_nombres, cadena);
+    alta_apyn(socio.apellidos_nombres);
 
     //FECHA NACIMIENTO
-    carga_manual("\nFECHA NACIMIENTO: ", cadena, sizeof(cadena));
-    if(sscanf(cadena, "%d/%d/%d%c",
-              &socio.fecha_nacimiento.dia, &socio.fecha_nacimiento.mes, &socio.fecha_nacimiento.anio, &extra) != 3)
-    {
-        socio.fecha_nacimiento.dia = 0;
-        socio.fecha_nacimiento.mes = 0;
-        socio.fecha_nacimiento.anio = 0;
-    }
+    alta_fecha("\nFECHA NACIMIENTO: ", &socio.fecha_nacimiento);
 
     //SEXO
-    carga_manual("\nSEXO: ", cadena, sizeof(cadena));
-    if(sscanf(cadena, "%c %c", &socio.sexo, &extra) != 1)
-        socio.sexo = '?';
-    else
-        socio.sexo = toupper((unsigned char)socio.sexo);
+    alta_sexo(&socio.sexo);
 
     //FECHA AFILIACION
-    carga_manual("\nFECHA AFILIACION: ", cadena, sizeof(cadena));
-    if(sscanf(cadena, "%d/%d/%d%c",
-              &socio.fecha_afiliacion.dia, &socio.fecha_afiliacion.mes, &socio.fecha_afiliacion.anio, &extra) != 3)
-    {
-        socio.fecha_afiliacion.dia = 0;
-        socio.fecha_afiliacion.mes = 0;
-        socio.fecha_afiliacion.anio = 0;
-    }
+    alta_fecha("\nFECHA AFILIACION: ", &socio.fecha_afiliacion);
 
     //CATEGORIA
-    carga_manual("\nCATEGORIA (MENOR/ADULTO): ", cadena, sizeof(cadena));
-    for(char *p = cadena; *p; p++)
-        *p = toupper((unsigned char)*p);
-
-    if(strlen(cadena) >= TAM_CATEGORIA || strlen(cadena) == 0)
-        strcpy(socio.categoria, "\0");
-    else
-        strcpy(socio.categoria, cadena);
+    alta_categoria(socio.categoria);
 
     //FECHA ULTIMA CUOTA
-    carga_manual("\nFECHA ULTIMA CUOTA PAGA: ", cadena, sizeof(cadena));
-    if(sscanf(cadena, "%d/%d/%d%c",
-              &socio.fecha_ultima_cuota.dia, &socio.fecha_ultima_cuota.mes, &socio.fecha_ultima_cuota.anio, &extra) != 3)
-    {
-        socio.fecha_ultima_cuota.dia = 0;
-        socio.fecha_ultima_cuota.mes = 0;
-        socio.fecha_ultima_cuota.anio = 0;
-    }
+    alta_fecha("\nFECHA ULTIMA CUOTA PAGA: ", &socio.fecha_ultima_cuota);
 
     //PLAN
-    carga_manual("\nPLAN (BASIC/PREMIUM/VIP/FAMILY): ", cadena, sizeof(cadena));
-    for(char *p = cadena; *p; p++)
-        *p = toupper((unsigned char)*p);
-    if(strlen(cadena) >= TAM_PLAN || strlen(cadena) == 0)
-        strcpy(socio.plan, "\0");
-    else
-        strcpy(socio.plan, cadena);
+    alta_plan(socio.plan);
 
     //EMAIL TUTOR
-    carga_manual("\nEMAIL TUTOR (si es ADULTO no ingrese ninguno): ", cadena, sizeof(cadena));
-    if(strlen(cadena) >= TAM_EMAIL)
-        strcpy(socio.email_tutor, "emailinvalido");
-    else
-        strcpy(socio.email_tutor, cadena);
-
+    alta_email(socio.email_tutor);
 
     if(valida_socio_ALU(&socio, &ctx, tipo_error) == ERROR)
     {
@@ -439,53 +377,7 @@ int socio_alta_manual_ALU(t_indice *indice, const char *path, const t_fecha *fec
 
     fclose(arch_bin);
 
-    char nacimiento[TAM_FECHA_TXT];
-    char afiliacion[TAM_FECHA_TXT];
-    char ultima_cuota[TAM_FECHA_TXT];
-
-    sprintf(nacimiento, "%02d/%02d/%04d",
-            socio.fecha_nacimiento.dia,
-            socio.fecha_nacimiento.mes,
-            socio.fecha_nacimiento.anio);
-
-    sprintf(afiliacion, "%02d/%02d/%04d",
-            socio.fecha_afiliacion.dia,
-            socio.fecha_afiliacion.mes,
-            socio.fecha_afiliacion.anio);
-
-    sprintf(ultima_cuota, "%02d/%02d/%04d",
-            socio.fecha_ultima_cuota.dia,
-            socio.fecha_ultima_cuota.mes,
-            socio.fecha_ultima_cuota.anio);
-
-    puts("\n================================================================= "
-         "NUEVO SOCIO =================================================================");
-    printf("%-10s %-15s %-32s %-12s %-3s %-12s %-10s %-12s %-3s %-11s %s\n",
-           "DNI",
-           "CUIL",
-           "APELLIDOS Y NOMBRES",
-           "NACIMIENTO",
-           "S",
-           "AFILIACION",
-           "CATEG.",
-           "ULT.CUOTA",
-           "E",
-           "PLAN",
-           "EMAIL TUTOR");
-    printf("%-10ld %-15s %-32.32s %-12s %-3c %-12s %-10s %-12s %-3c %-11s %s\n",
-           socio.dni,
-           socio.cuil,
-           socio.apellidos_nombres,
-           nacimiento,
-           socio.sexo,
-           afiliacion,
-           socio.categoria,
-           ultima_cuota,
-           socio.estado,
-           socio.plan,
-           socio.email_tutor);
-    puts("=================================================================="
-         "=============================================================================");
+    mostrar_formato_socio("NUEVO SOCIO", &socio);
 
     return OK;
 }
@@ -505,17 +397,9 @@ Observaciones:  -
 int socio_modificacion_manual_ALU(t_indice *indice, const char *path, const t_fecha *fecha_proceso)
 {
     t_reg_indice reg_buscado;
-    char cadena[TAM_INGRESO];
-    char mensaje[TAM_INGRESO];
-    char extra;
 
-    carga_manual("\nDNI del socio a modificar: ", cadena, sizeof(cadena));
-    if(sscanf(cadena, "%ld%c", &reg_buscado.id, &extra) != 1 ||
-            indice_buscar_ALU(indice, &reg_buscado, sizeof(t_reg_indice), compara_reg_indice_ALU) == NO_EXISTE)
-    {
-        puts("Modificacion rechazada. El DNI ingresado no existe o fue dado de baja.");
+    if(!verificar_dni_modificar(&reg_buscado, indice))
         return ERROR;
-    }
 
     FILE *arch_bin = fopen(path, "rb+");
     t_socio socio;
@@ -525,175 +409,40 @@ int socio_modificacion_manual_ALU(t_indice *indice, const char *path, const t_fe
     if(!arch_bin)
         return ERROR;
 
-
     if(!socio_leer_ALU(arch_bin, reg_buscado.nro_reg, &socio))
     {
         fclose(arch_bin);
         return ERROR;
     }
 
-
-    char nacimiento[TAM_FECHA_TXT];
-    char afiliacion[TAM_FECHA_TXT];
-    char ultima_cuota[TAM_FECHA_TXT];
-
-    sprintf(nacimiento, "%02d/%02d/%04d",
-            socio.fecha_nacimiento.dia,
-            socio.fecha_nacimiento.mes,
-            socio.fecha_nacimiento.anio);
-
-    sprintf(afiliacion, "%02d/%02d/%04d",
-            socio.fecha_afiliacion.dia,
-            socio.fecha_afiliacion.mes,
-            socio.fecha_afiliacion.anio);
-
-    sprintf(ultima_cuota, "%02d/%02d/%04d",
-            socio.fecha_ultima_cuota.dia,
-            socio.fecha_ultima_cuota.mes,
-            socio.fecha_ultima_cuota.anio);
-
-    printf("\nDatos actuales:\n");
-    printf("%-10s %-15s %-32s %-12s %-3s %-12s %-10s %-12s %-3s %-12s %s\n",
-           "DNI",
-           "CUIL",
-           "APELLIDOS Y NOMBRES",
-           "NACIMIENTO",
-           "S",
-           "AFILIACION",
-           "CATEG.",
-           "ULT.CUOTA",
-           "E",
-           "PLAN",
-           "EMAIL TUTOR");
-    printf("%-10ld %-15s %-32.32s %-12s %-3c %-12s %-10s %-12s %-3c %-12s %s\n\n",
-           socio.dni,
-           socio.cuil,
-           socio.apellidos_nombres,
-           nacimiento,
-           socio.sexo,
-           afiliacion,
-           socio.categoria,
-           ultima_cuota,
-           socio.estado,
-           socio.plan,
-           socio.email_tutor);
-
-    printf("(Enter para conservar el valor actual)");
+    mostrar_formato_socio("DATOS ACTUALES", &socio);
 
     //CUIL
-    sprintf(mensaje, "\nCUIL (XY-XXXXXXXX-Z) [%s]: ", socio.cuil);
-    carga_manual(mensaje, cadena, sizeof(cadena));
-    if(*cadena != '\0')
-    {
-        if((strlen(cadena) >= TAM_CUIL) || (sscanf(cadena, "%s", socio.cuil) != 1))
-            strcpy(socio.cuil, "00-00000000-0");
-    }
+    modificar_cuil(socio.cuil);
 
     //APELLIDOS Y NOMBRES
-    sprintf(mensaje, "\nAPELLIDOS Y NOMBRES [%s]: ", socio.apellidos_nombres);
-    carga_manual(mensaje, cadena, sizeof(cadena));
-    if(*cadena != '\0')
-    {
-        if(strlen(cadena) >= TAM_APYN || strlen(cadena) == 0)
-            strcpy(socio.apellidos_nombres, "\0");
-        else
-            strcpy(socio.apellidos_nombres, cadena);
-    }
+    modificar_apyn(socio.apellidos_nombres);
 
     //FECHA NACIMIENTO
-    sprintf(mensaje, "\nFECHA DE NACIMIENTO [%02d/%02d/%04d]: ",
-            socio.fecha_nacimiento.dia, socio.fecha_nacimiento.mes, socio.fecha_nacimiento.anio);
-    carga_manual(mensaje, cadena, sizeof(cadena));
-    if(*cadena != '\0')
-    {
-        if(sscanf(cadena, "%d/%d/%d%c",
-                  &socio.fecha_nacimiento.dia, &socio.fecha_nacimiento.mes, &socio.fecha_nacimiento.anio, &extra) != 3)
-        {
-            socio.fecha_nacimiento.dia = 0;
-            socio.fecha_nacimiento.mes = 0;
-            socio.fecha_nacimiento.anio = 0;
-        }
-    }
+    modificar_fecha("\nFECHA DE NACIMIENTO [%02d/%02d/%04d]: ", &socio.fecha_nacimiento);
 
     //SEXO
-    sprintf(mensaje, "\nSEXO (H/M) [%c]: ", socio.sexo);
-    carga_manual(mensaje, cadena, sizeof(cadena));
-    if(*cadena != '\0')
-    {
-        if(sscanf(cadena, "%c %c", &socio.sexo, &extra) != 1)
-            socio.sexo = '?';
-        else
-            socio.sexo = toupper((unsigned char)socio.sexo);
-    }
+    modificar_sexo(&socio.sexo);
 
     //FECHA AFILIACION
-    sprintf(mensaje, "\nFECHA DE AFILIACION [%02d/%02d/%04d]: ",
-            socio.fecha_afiliacion.dia, socio.fecha_afiliacion.mes, socio.fecha_afiliacion.anio);
-    carga_manual(mensaje, cadena, sizeof(cadena));
-    if(*cadena != '\0')
-    {
-        if(sscanf(cadena, "%d/%d/%d%c",
-                  &socio.fecha_afiliacion.dia, &socio.fecha_afiliacion.mes, &socio.fecha_afiliacion.anio, &extra) != 3)
-        {
-            socio.fecha_afiliacion.dia = 0;
-            socio.fecha_afiliacion.mes = 0;
-            socio.fecha_afiliacion.anio = 0;
-        }
-    }
+    modificar_fecha("\nFECHA DE AFILIACION [%02d/%02d/%04d]: ", &socio.fecha_afiliacion);
 
     //CATEGORIA
-    sprintf(mensaje, "\nCATEGORIA (MENOR/ADULTO) [%s]: ", socio.categoria);
-    carga_manual(mensaje, cadena, sizeof(cadena));
-    if(*cadena != '\0')
-    {
-        for(char *p = cadena; *p; p++)
-            *p = toupper((unsigned char)*p);
-
-        if(strlen(cadena) >= TAM_CATEGORIA || strlen(cadena) == 0)
-            strcpy(socio.categoria, "\0");
-        else
-            strcpy(socio.categoria, cadena);
-    }
+    modificar_categoria(socio.categoria);
 
     //FECHA ULTIMA CUOTA
-    sprintf(mensaje, "\nFECHA ULTIMA CUOTA PAGA [%02d/%02d/%04d]: ",
-            socio.fecha_ultima_cuota.dia, socio.fecha_ultima_cuota.mes, socio.fecha_ultima_cuota.anio);
-    carga_manual(mensaje, cadena, sizeof(cadena));
-    if(*cadena != '\0')
-    {
-        if(sscanf(cadena, "%d/%d/%d%c",
-                  &socio.fecha_ultima_cuota.dia, &socio.fecha_ultima_cuota.mes, &socio.fecha_ultima_cuota.anio, &extra) != 3)
-        {
-            socio.fecha_ultima_cuota.dia = 0;
-            socio.fecha_ultima_cuota.mes = 0;
-            socio.fecha_ultima_cuota.anio = 0;
-        }
-    }
+    modificar_fecha("\nFECHA ULTIMA CUOTA PAGA [%02d/%02d/%04d]: ", &socio.fecha_ultima_cuota);
 
     //PLAN
-    sprintf(mensaje, "\nPLAN [%s]: ", socio.plan);
-    carga_manual(mensaje, cadena, sizeof(cadena));
-    if(*cadena != '\0')
-    {
-        for(char *p = cadena; *p; p++)
-            *p = toupper((unsigned char)*p);
-
-        if(strlen(cadena) >= TAM_PLAN || strlen(cadena) == 0)
-            strcpy(socio.plan, "\0");
-        else
-            strcpy(socio.plan, cadena);
-    }
+    modificar_plan(socio.plan);
 
     //EMAIL TUTOR
-    sprintf(mensaje, "\nEMAIL TUTOR (vacio si es ADULTO) [%s]: ", socio.email_tutor);
-    carga_manual(mensaje, cadena, sizeof(cadena));
-    if(*cadena != '\0')
-    {
-        if(strlen(cadena) >= TAM_EMAIL)
-            strcpy(socio.email_tutor, "emailinvalido");
-        else
-            strcpy(socio.email_tutor, cadena);
-    }
+    modificar_email(socio.email_tutor);
 
     if(valida_socio_ALU(&socio, &ctx, tipo_error) == ERROR)
     {
@@ -762,6 +511,8 @@ int socio_baja_ALU(t_indice *indice, const char *path)
     fclose(pf);
 
     indice_eliminar_ALU(indice, &reg_eliminar, sizeof(t_reg_indice), compara_reg_indice_ALU);
+
+    puts("\nSocio dado de baja correctamente.\n");
 
     return OK;
 }
@@ -869,16 +620,20 @@ Observaciones:  -
 ******************************************************************************/
 void abm_socio_ALU(t_indice *indice, const t_fecha *fecha_proceso)
 {
-    char tecla;
-    printf("Alta / Modificacion de socio\n\nA - Alta\nM - Modificacion\nV - Volver\n\nPresione la tecla:");
-    tecla = getch();
+    char cadena[TAM_INGRESO];
+    carga_manual("Alta / Modificacion de socio\n\nA - Alta\nM - Modificacion\nV - Volver\n\nPresione la tecla:",
+                         cadena, TAM_INGRESO);
 
-    while((tecla != 'A' && tecla != 'a') && (tecla != 'M' && tecla != 'm') && (tecla != 'V' && tecla != 'v'))
-        tecla = getch();
+    while(strlen(cadena) != 1 || ((*cadena != 'A' && *cadena != 'a') && (*cadena != 'M' && *cadena != 'm') && (*cadena != 'V' && *cadena != 'v')))
+    {
+        puts("La opcion ingresada es invalida.\n");
+        carga_manual("Alta / Modificacion de socio\n\nA - Alta\nM - Modificacion\nV - Volver\n\nPresione la tecla:",
+                         cadena, TAM_INGRESO);
+    }
 
-    tecla = TO_UPPER(tecla);
+    *cadena = TO_UPPER(*cadena);
 
-    switch(tecla)
+    switch(*cadena)
     {
     case 'A':
         socio_alta_manual_ALU(indice, ARCH_SOCIOS_BIN, fecha_proceso);
@@ -964,26 +719,6 @@ static int dni_duplicado(const t_contexto *ctx, long dni)
     return (indice_buscar_ALU(ctx->indice, &reg_ind, sizeof(t_reg_indice),compara_reg_indice_ALU) != NO_EXISTE);
 }
 
-static int apyn_valido(const char* s)
-{
-    if(!s || *s == '\0')
-        return 0;
-
-    int tiene_letras = 0;
-
-    while(*s)
-    {
-        if(isdigit((unsigned char)*s))
-            return 0;
-
-        if(isalpha((unsigned char)*s))
-            tiene_letras = 1;
-
-        s++;
-    }
-    return tiene_letras;
-}
-
 
 void socio_mostrar_alu(const t_socio *socio)
 {
@@ -998,4 +733,285 @@ void socio_mostrar_alu(const t_socio *socio)
     printf("%-8ld %-13s %-61s \t%-10s %c %-10s %-6s %-10s %c %-10s %-31s\n", socio->dni, socio->cuil, socio->apellidos_nombres, nacimiento,
            socio->sexo, afiliacion, socio->categoria, ultima_cuota, socio->estado,
            socio->plan, socio->email_tutor);
+}
+
+void alta_dni(char *dni, long *dni_socio)
+{
+    char cadena[TAM_INGRESO];
+    char extra;
+    carga_manual("\nDNI: ", cadena, sizeof(cadena));
+    strcpy(dni, cadena);
+    if(sscanf(cadena, "%ld%c", dni_socio, &extra) != 1)
+    {
+        dni_socio = 0;
+    }
+}
+
+void alta_cuil(char *cuil)
+{
+    char cadena[TAM_INGRESO];
+    carga_manual("\nCUIL (XY-XXXXXXXX-Z): ", cadena, sizeof(cadena));
+    if((strlen(cadena) >= TAM_CUIL) || (sscanf(cadena, "%s", cuil) != 1))
+        strcpy(cuil, "00-00000000-0");
+}
+
+void alta_apyn(char *apyn)
+{
+    char cadena[TAM_INGRESO];
+    carga_manual("\nAPELLIDOS Y NOMBRES: ", cadena, sizeof(cadena));
+    if(strlen(cadena) >= TAM_APYN || strlen(cadena) == 0)
+        strcpy(apyn, "\0");
+    else
+        strcpy(apyn, cadena);
+}
+
+void alta_fecha(const char *mensaje, t_fecha *fecha)
+{
+    char cadena[TAM_INGRESO];
+    char extra;
+    carga_manual(mensaje, cadena, sizeof(cadena));
+    if(sscanf(cadena, "%d/%d/%d%c", &fecha->dia, &fecha->mes, &fecha->anio, &extra) != 3)
+    {
+        fecha->dia = 0;
+        fecha->mes = 0;
+        fecha->anio = 0;
+    }
+}
+
+void alta_sexo(char *sexo)
+{
+    char cadena[TAM_INGRESO];
+    char extra;
+    carga_manual("\nSEXO: ", cadena, sizeof(cadena));
+    if(sscanf(cadena, "%c %c", sexo, &extra) != 1)
+        *sexo = '?';
+    else
+        *sexo = TO_UPPER(*sexo);
+}
+
+void alta_categoria(char *categoria)
+{
+    char cadena[TAM_INGRESO];
+    carga_manual("\nCATEGORIA (MENOR/ADULTO): ", cadena, sizeof(cadena));
+    for(char *p = cadena; *p; p++)
+        *p = TO_UPPER(*p);
+
+    if(strlen(cadena) >= TAM_CATEGORIA || strlen(cadena) == 0)
+        strcpy(categoria, "\0");
+    else
+        strcpy(categoria, cadena);
+}
+
+void alta_plan(char *plan)
+{
+    char cadena[TAM_INGRESO];
+    carga_manual("\nPLAN (BASIC/PREMIUM/VIP/FAMILY): ", cadena, sizeof(cadena));
+    for(char *p = cadena; *p; p++)
+        *p = TO_UPPER(*p);
+    if(strlen(cadena) >= TAM_PLAN || strlen(cadena) == 0)
+        strcpy(plan, "\0");
+    else
+        strcpy(plan, cadena);
+}
+
+void alta_email(char *email)
+{
+    char cadena[TAM_INGRESO];
+    carga_manual("\nEMAIL TUTOR (si es ADULTO no ingrese ninguno): ", cadena, sizeof(cadena));
+    if(strlen(cadena) >= TAM_EMAIL)
+        strcpy(email, "emailinvalido");
+    else
+        strcpy(email, cadena);
+}
+
+void mostrar_formato_socio(const char* encabezado, const t_socio *socio)
+{
+    char nacimiento[TAM_FECHA_TXT];
+    char afiliacion[TAM_FECHA_TXT];
+    char ultima_cuota[TAM_FECHA_TXT];
+
+    sprintf(nacimiento, "%02d/%02d/%04d",
+            socio->fecha_nacimiento.dia,
+            socio->fecha_nacimiento.mes,
+            socio->fecha_nacimiento.anio);
+
+    sprintf(afiliacion, "%02d/%02d/%04d",
+            socio->fecha_afiliacion.dia,
+            socio->fecha_afiliacion.mes,
+            socio->fecha_afiliacion.anio);
+
+    sprintf(ultima_cuota, "%02d/%02d/%04d",
+            socio->fecha_ultima_cuota.dia,
+            socio->fecha_ultima_cuota.mes,
+            socio->fecha_ultima_cuota.anio);
+
+    printf("\n================================================================= "
+         "%s =================================================================\n", encabezado);
+    printf("%-10s %-15s %-32s %-12s %-3s %-12s %-10s %-12s %-3s %-11s %s\n",
+           "DNI",
+           "CUIL",
+           "APELLIDOS Y NOMBRES",
+           "NACIMIENTO",
+           "S",
+           "AFILIACION",
+           "CATEG.",
+           "ULT.CUOTA",
+           "E",
+           "PLAN",
+           "EMAIL TUTOR");
+    printf("%-10ld %-15s %-32.32s %-12s %-3c %-12s %-10s %-12s %-3c %-11s %s\n",
+           socio->dni,
+           socio->cuil,
+           socio->apellidos_nombres,
+           nacimiento,
+           socio->sexo,
+           afiliacion,
+           socio->categoria,
+           ultima_cuota,
+           socio->estado,
+           socio->plan,
+           socio->email_tutor);
+    puts("=================================================================="
+         "=============================================================================");
+}
+
+int verificar_dni_modificar(t_reg_indice *reg_buscado, t_indice *indice)
+{
+    char cadena[TAM_INGRESO];
+    char extra;
+
+    carga_manual("\nDNI del socio a modificar: ", cadena, sizeof(cadena));
+    if(sscanf(cadena, "%ld%c", &reg_buscado->id, &extra) != 1 ||
+            indice_buscar_ALU(indice, reg_buscado, sizeof(t_reg_indice), compara_reg_indice_ALU) == NO_EXISTE)
+    {
+        puts("Modificacion rechazada. El DNI ingresado no existe o fue dado de baja.");
+        return ERROR;
+    }
+
+    return OK;
+}
+
+void modificar_cuil(char *cuil)
+{
+    char cadena[TAM_INGRESO];
+    char mensaje[TAM_INGRESO];
+
+    sprintf(mensaje, "\nCUIL (XY-XXXXXXXX-Z) [%s]: ", cuil);
+    carga_manual(mensaje, cadena, sizeof(cadena));
+    if(*cadena != '\0')
+    {
+        if((strlen(cadena) >= TAM_CUIL) || (sscanf(cadena, "%s", cuil) != 1))
+            strcpy(cuil, "00-00000000-0");
+    }
+}
+
+void modificar_apyn(char *apyn)
+{
+    char cadena[TAM_INGRESO];
+    char mensaje[TAM_INGRESO];
+
+    sprintf(mensaje, "\nAPELLIDOS Y NOMBRES [%s]: ", apyn);
+    carga_manual(mensaje, cadena, sizeof(cadena));
+    if(*cadena != '\0')
+    {
+        if(strlen(cadena) >= TAM_APYN || strlen(cadena) == 0)
+            strcpy(apyn, "\0");
+        else
+            strcpy(apyn, cadena);
+    }
+}
+
+void modificar_fecha(const char *tipo, t_fecha *fecha)
+{
+    char cadena[TAM_INGRESO];
+    char mensaje[TAM_INGRESO];
+    char extra;
+
+    sprintf(mensaje, tipo, fecha->dia, fecha->mes, fecha->anio);
+    carga_manual(mensaje, cadena, sizeof(cadena));
+    if(*cadena != '\0')
+    {
+        if(sscanf(cadena, "%d/%d/%d%c", &fecha->dia, &fecha->mes, &fecha->anio, &extra) != 3)
+        {
+            fecha->dia = 0;
+            fecha->mes = 0;
+            fecha->anio = 0;
+        }
+    }
+}
+
+void modificar_sexo(char *sexo)
+{
+    char cadena[TAM_INGRESO];
+    char mensaje[TAM_INGRESO];
+    char extra;
+
+    sprintf(mensaje, "\nSEXO (H/M) [%c]: ", *sexo);
+    carga_manual(mensaje, cadena, sizeof(cadena));
+    if(*cadena != '\0')
+    {
+        if(sscanf(cadena, "%c %c", sexo, &extra) != 1)
+            *sexo = '?';
+        else
+            *sexo = TO_UPPER(*sexo);
+    }
+}
+
+void modificar_categoria(char *categoria)
+{
+    char cadena[TAM_INGRESO];
+    char mensaje[TAM_INGRESO];
+
+    sprintf(mensaje, "\nCATEGORIA (MENOR/ADULTO) [%s]: ", categoria);
+    carga_manual(mensaje, cadena, sizeof(cadena));
+
+    if(*cadena != '\0')
+    {
+        for(char *p = cadena; *p; p++)
+            *p = TO_UPPER(*p);
+
+        if(strlen(cadena) >= TAM_CATEGORIA || strlen(cadena) == 0)
+            strcpy(categoria, "\0");
+        else
+            strcpy(categoria, cadena);
+    }
+}
+
+void modificar_plan(char *plan)
+{
+    char cadena[TAM_INGRESO];
+    char mensaje[TAM_INGRESO];
+
+    sprintf(mensaje, "\nPLAN [%s]: ", plan);
+    carga_manual(mensaje, cadena, sizeof(cadena));
+    if(*cadena != '\0')
+    {
+        for(char *p = cadena; *p; p++)
+            *p = TO_UPPER(*p);
+
+        if(strlen(cadena) >= TAM_PLAN || strlen(cadena) == 0)
+            strcpy(plan, "\0");
+        else
+            strcpy(plan, cadena);
+    }
+}
+
+void modificar_email(char *email)
+{
+    char cadena[TAM_INGRESO];
+    char mensaje[TAM_INGRESO];
+
+    sprintf(mensaje, "\nEMAIL TUTOR ((vacio si ADULTO, '-' para borrar)) [%s]: ", email);
+    carga_manual(mensaje, cadena, sizeof(cadena));
+
+    if(strlen(cadena) == 1 && *cadena == '-')
+        strcpy(email, "\0");
+
+    else if(*cadena != '\0')
+    {
+        if(strlen(cadena) >= TAM_EMAIL)
+            strcpy(email, "emailinvalido");
+        else
+            strcpy(email, cadena);
+    }
 }

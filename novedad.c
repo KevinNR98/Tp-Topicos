@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdlib.h>
 #include "novedad.h"
 #include "cadena.h"
 
@@ -36,18 +37,24 @@ int novedades_procesar_ALU(t_indice *indice, const char *path_novedades,
         return ERROR;
     }
 
+    t_rechazo *rechazos = NULL;
+    t_rechazo *p_rec;
+    if(reservar_rechazos(f_nov, &rechazos) == ERROR)
+    {
+        puts("ERROR AL RESERVAR MEMORIA");
+        fclose(f_nov);
+        fclose(f_tit);
+        return ERROR;
+    }
+
+    p_rec = rechazos;
 
     t_novedad novedad;
     t_reg_indice reg_buscado;
     t_titulo titulo;
-    t_rechazo rechazos[MAX_RECHAZOS] = {0};
     int c_exitos = 0, c_rechazos = 0;
 
-    t_rechazo *p_rec = rechazos;
-
-    fread(&novedad, sizeof(t_novedad), 1, f_nov);
-
-    while(!feof(f_nov))
+    while(fread(&novedad, sizeof(t_novedad), 1, f_nov))
     {
         reg_buscado.id = novedad.titulo.id;
         switch(novedad.codigo_operacion)
@@ -141,11 +148,16 @@ int novedades_procesar_ALU(t_indice *indice, const char *path_novedades,
                 p_rec++;
                 break;
         }
-        fread(&novedad, sizeof(t_novedad), 1, f_nov);
     }
 
     fclose(f_tit);
     fclose(f_nov);
+
+    if(c_exitos == 0 && c_rechazos == 0)
+    {
+        free(rechazos);
+        return OK;
+    }
 
     printf("REPORTE DE NOVEDADES PROCESADAS\n\nCantidad de exitos: %d\nCantidad de rechazos: %d\n\n", c_exitos, c_rechazos);
 
@@ -156,6 +168,33 @@ int novedades_procesar_ALU(t_indice *indice, const char *path_novedades,
         for(int i=0; i < c_rechazos; i++, p_rec++)
             printf("ID: %d\t\tMOTIVO: %s\n\n", p_rec->id, p_rec->motivo);
     }
+
+    free(rechazos);
+    return OK;
+}
+
+int reservar_rechazos(FILE *arch, t_rechazo **rechazos)
+{
+    long tam_arch;
+    size_t max_rechazos;
+
+    //Calculo el tama�o del archivo y posteriormente la cantidad maxima de rechazos
+    fseek(arch, 0, SEEK_END);
+
+    tam_arch = ftell(arch);
+
+    if(tam_arch < 0 || tam_arch % sizeof(t_novedad) != 0)
+        return ERROR;
+
+    max_rechazos = (size_t)(tam_arch / sizeof(t_novedad));
+
+    fseek(arch, 0, SEEK_SET);
+
+    //Reservo memoria para la cantidad maxima de rechazos
+    *rechazos = malloc(max_rechazos * sizeof(t_rechazo));
+
+    if(*rechazos == NULL)
+        return ERROR;
 
     return OK;
 }
